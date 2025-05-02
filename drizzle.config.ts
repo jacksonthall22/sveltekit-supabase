@@ -1,14 +1,10 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  dialect: "postgresql",
+  out: "./drizzle",
   schema: "./src/lib/db/schema.ts",
-  out: "./supabase/migrations",
+  dialect: "postgresql",
   dbCredentials: {
-    host: "localhost",
-    port: 54321,
-    user: "postgres",
-    password: "postgres",
-    database: "supabase",
+    url: process.env.DATABASE_URL!,
   },
 });

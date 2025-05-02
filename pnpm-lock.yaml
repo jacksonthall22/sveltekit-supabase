@@ -65,6 +65,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.5
         version: 4.1.5
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@4.1.5)
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^6.0.0
@@ -1915,6 +1918,11 @@ packages:
     peerDependencies:
       tailwindcss: '*'
 
+  tailwindcss-animate@1.0.7:
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+
   tailwindcss@4.1.5:
     resolution: {integrity: sha512-nYtSPfWGDiWgCkwQG/m+aX83XCwf62sBgg3bIlNiiOcggnS1x3uVRDAuyelBFL+vJdOPPCGElxv9DjHJjRHiVA==}
 
@@ -3634,6 +3642,10 @@ snapshots:
   tailwind-variants@1.0.0(tailwindcss@4.1.5):
     dependencies:
       tailwind-merge: 3.0.2
+      tailwindcss: 4.1.5
+
+  tailwindcss-animate@1.0.7(tailwindcss@4.1.5):
+    dependencies:
       tailwindcss: 4.1.5
 
   tailwindcss@4.1.5: {}
