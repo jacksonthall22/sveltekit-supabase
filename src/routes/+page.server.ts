@@ -1,44 +1,61 @@
-import { getOrCreateUserProfile } from "$lib/auth";
-import { db } from "$lib/db/index.js";
-import { profileTable } from "$lib/db/schema.js";
-import { error } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
-import { zfd } from "zod-form-data";
+import { db } from '$lib/db/index.js'
+import { profileTable } from '$lib/db/schema.js'
+import { error, json, redirect } from '@sveltejs/kit'
+import { eq } from 'drizzle-orm'
+import type { PageServerLoad } from './$types'
+import { getOrCreateUserProfile } from '$lib/auth/index.server'
+import { z } from 'zod'
+import { superValidate, type SuperValidated } from 'sveltekit-superforms'
+import { zod } from 'sveltekit-superforms/adapters'
 
-export const load = async ({ locals }) => {
-  const userProfile = await getOrCreateUserProfile(locals);
+const formSchema = z.object({
+  firstName: z.string().default(''),
+  lastName: z.string().default(''),
+  email: z.string().email().default(''),
+})
 
-  return {
-    userProfile,
-  };
-};
+export type UpdateProfileFormValidated = SuperValidated<typeof formSchema.shape>
+
+export const load: PageServerLoad = async ({ locals }) => {
+  const userProfile = await getOrCreateUserProfile(locals)
+  // console.log(`[load] test: userProfile:`, userProfile)
+  // console.log(`[load] test: locals:`, locals)
+
+  const form = await superValidate(userProfile, zod(formSchema))
+  // console.log(`[load] test: form:`, form)
+
+  return { form }
+}
 
 export const actions = {
   default: async ({ request, locals }) => {
-    const userProfile = await getOrCreateUserProfile(locals);
+    const user = await locals.safeGetSession()
+    if (!user) {
+      return error(401, 'Unauthorized')
+    }
+
+    const userProfile = await getOrCreateUserProfile(locals)
 
     if (!userProfile) {
-      error(401, "You need to be logged in!");
+      return error(401, 'Unauthorized')
     }
 
-    const schema = zfd.formData({
-      firstName: zfd.text(),
-      lastName: zfd.text(),
-      email: zfd.text(),
-    });
+    const form = await superValidate(request, zod(formSchema))
+    // console.log(`[actions] form:`, form)
 
-    const { data } = schema.safeParse(await request.formData());
-
-    if (!data) {
-      error(400, "Invalid form data");
+    if (!form) {
+      return error(400, `Invalid form data`)
     }
 
-    await db.update(profileTable).set({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-    }).where(eq(profileTable.id, userProfile.id));
+    await db
+      .update(profileTable)
+      .set({
+        firstName: form.data.firstName,
+        lastName: form.data.lastName,
+        email: form.data.email
+      })
+      .where(eq(profileTable.id, userProfile.id))
 
-    return { success: true };
-  },
-};
+    return { success: true, form }
+  }
+}

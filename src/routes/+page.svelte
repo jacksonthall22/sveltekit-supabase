@@ -1,17 +1,25 @@
 <script lang="ts">
-	import Hero from '$lib/components/Hero.svelte';
-	import UpdateProfile from '$lib/components/UpdateProfile.svelte';
+  import UpdateProfile from '$lib/components/UpdateProfile.svelte'
+  import Icon from '@iconify/svelte'
 
-	export let data;
-	let avatar: string;
+  let { data } = $props()
 
-	// Reactive statement to update avatar when data changes
-	$: userProfile = data?.userProfile || '';
-	$: avatar = data?.user?.user_metadata?.avatar_url || '';
+  let user = $derived(data.user)
+
+  $inspect('user', user)
 </script>
 
-{#if data?.userProfile}
-	<UpdateProfile {userProfile} {avatar} />
+{#if user}
+  <UpdateProfile form={data.form} />
 {:else}
-	<Hero />
+  <div class="hero min-h-72 ring-1">
+    <div class='hero-content flex-col'>
+      <div class="flex items-center justify-center gap-2">
+        <Icon icon="logos:svelte-icon" class="h-24 w-24" />
+        <div>+</div>
+        <Icon icon="logos:supabase-icon" class="h-24 w-24" />
+      </div>
+      <a href='/auth' class='btn btn-lg btn-block'>Login</a>
+    </div>
+  </div>
 {/if}
