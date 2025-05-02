@@ -1,5 +1,7 @@
 # sveltekit-supabase
 
+## TODO: Update these instructions...
+
 ## Description
 
 A simple SvelteKit app that uses Supabase for authentication via GitHub authentication.
