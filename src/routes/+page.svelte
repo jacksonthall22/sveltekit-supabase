@@ -3,10 +3,7 @@
   import Icon from '@iconify/svelte'
 
   let { data } = $props()
-
   let user = $derived(data.user)
-
-  $inspect('user', user)
 </script>
 
 {#if user}
