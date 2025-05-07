@@ -16,6 +16,10 @@
     }
   )
 
+  console.log(`test: errors: ${JSON.stringify(errors)}`)
+  console.log(`test: constraints: ${JSON.stringify(constraints)}`)
+  console.log(`test: message: ${JSON.stringify(message)}`)
+
   let avatar = ''
   let firstName: string = $state(`${$form.firstName}`)
   let lastName: string = $state(`${$form.lastName}`)
@@ -26,7 +30,7 @@
   <input type="checkbox" />
   <div class="collapse-title font-semibold">Debug info</div>
   <div class="collapse-content text-sm">
-<SuperDebug bind:data={formRaw} />
+    <SuperDebug bind:data={formRaw} />
   </div>
 </div>
 
