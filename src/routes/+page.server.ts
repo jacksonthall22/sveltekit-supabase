@@ -14,7 +14,7 @@ const formSchema = z.object({
   email: z.string().email().default(''),
 })
 
-export type UpdateProfileFormValidated = SuperValidated<typeof formSchema.shape>
+export type UpdateProfileFormValidated = SuperValidated<z.infer<typeof formSchema>>
 
 export const load: PageServerLoad = async ({ locals }) => {
   const userProfile = await getOrCreateUserProfile(locals)
