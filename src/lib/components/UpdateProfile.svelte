@@ -22,7 +22,13 @@
   let email: string = $state(`${$form.email}`)
 </script>
 
+<div class="collapse bg-base-100 border-base-300 border">
+  <input type="checkbox" />
+  <div class="collapse-title font-semibold">Debug info</div>
+  <div class="collapse-content text-sm">
 <SuperDebug bind:data={formRaw} />
+  </div>
+</div>
 
 <div class="card card-lg">
   <div class="card-content">
