@@ -2,7 +2,6 @@
   import SuperDebug from 'sveltekit-superforms'
   import type { UpdateProfileFormValidated } from '../../routes/+page.server'
   import { superForm } from 'sveltekit-superforms'
-  import { get } from 'svelte/store'
 
   interface Props {
     form: UpdateProfileFormValidated
