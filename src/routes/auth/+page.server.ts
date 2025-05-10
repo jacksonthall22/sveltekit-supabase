@@ -1,66 +1,77 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { Actions } from './$types'
+import type { PageServerLoad } from '../$types'
+import { z } from 'zod'
+import type { SuperValidated } from 'sveltekit-superforms'
+import { zod } from 'sveltekit-superforms/adapters'
+import { superValidate } from 'sveltekit-superforms'
+import type { H_CAPTCHA_TOKEN_INPUT_NAME } from '$lib/constants'
+
+const signUpFormSchema = z.object({
+  firstName: z.string().default(''),
+  lastName: z.string().default(''),
+  email: z.string().email().default(''),
+  password: z.string().min(8).default(''),
+  hCaptchaToken: z.string().default('')
+})
+
+const signInFormSchema = z.object({
+  email: z.string().email().default(''),
+  password: z.string().min(6).default(''),
+  hCaptchaToken: z.string()
+})
+
+export type SignUpFormValidated = SuperValidated<z.infer<typeof signUpFormSchema>>
+export type SignInFormValidated = SuperValidated<z.infer<typeof signInFormSchema>>
+
+export const load: PageServerLoad = async () => {
+  const signUpForm = await superValidate({}, zod(signUpFormSchema))
+  const signInForm = await superValidate({}, zod(signInFormSchema))
+
+  return { signInForm, signUpForm }
+}
 
 export const actions: Actions = {
-  signup: async ({ request, locals: { supabase } }) => {
+  signUp: async ({ request, locals: { supabase } }) => {
+    const form = await superValidate(request, zod(signUpFormSchema))
+    if (!form.valid) return fail(400, { error: 'Invalid form data', form })
+
     const formData = await request.formData()
-    // console.log(`[AUTH +page.server.ts] test: signup() formData: ${JSON.stringify(formData)}`)
+
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const hcaptchaToken = formData.get('h-captcha-response') as string | null
 
     // Verify hCaptcha before proceeding
-    if (!hcaptchaToken) {
-      // console.error('test: Missing hCaptcha token')
-      return fail(400, { hcaptchaResponse: 'Missing hCaptcha token' })
-    } else {
-      // console.log(`[AUTH +page.server.ts] test: signup() hcaptchaToken: ${hcaptchaToken}`)
-    }
+    if (!hcaptchaToken) return fail(400, { error: 'Missing hCaptcha token', form })
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: { captchaToken: hcaptchaToken }
     })
-    // console.log(`[AUTH +page.server.ts] test: signup() error: ${error}`)
+    if (error) return fail(400, { signUpError: error, form })
 
-    if (error) {
-      // console.error(`[AUTH +page.server.ts] error: ${error}`)
-      return fail(400, { signUpError: error })
-    }
-    
-    // console.log(`[AUTH +page.server.ts] test: signup() SUCCESS! redirecting to '/'...`)
     return { success: true }
   },
-  login: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    // console.log(`[AUTH +page.server.ts] test: login() formData: ${JSON.stringify(formData)}`)
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const hcaptchaToken = formData.get('h-captcha-response') as string | null
 
+  signIn: async ({ request, locals: { supabase } }) => {
+    const form = await superValidate(request, zod(signInFormSchema))
+    if (!form.valid) return fail(400, { error: 'Invalid form data', form })
+    
     // Verify hCaptcha before proceeding
-    if (!hcaptchaToken) {
-      console.error('Missing hCaptcha token')
-      return redirect(303, '/auth/error')
-    }
-
-    // console.log(`[AUTH +page.server.ts] test: login() email: ${email}, password: ${password}`)
+    if (!form.data.hCaptchaToken) return fail(400, { error: 'Missing hCaptcha token', form })
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-      options: {
-        captchaToken: hcaptchaToken
-      }
+      email: form.data.email,
+      password: form.data.password,
+      options: { captchaToken: form.data.hCaptchaToken }
     })
 
-    // console.log(`[AUTH +page.server.ts] test: login() error: ${error}`)
-    if (error) {
-      console.error(error)
-      return redirect(303, '/auth/error')
-    } else {
-      return redirect(303, '/private')
-    }
+    if (error) return fail(401, { error: 'Invalid credentials', form })
+
+    console.log('test: signIn action. redirecting to /')
+
+    return redirect(303, '/')
   }
 }
