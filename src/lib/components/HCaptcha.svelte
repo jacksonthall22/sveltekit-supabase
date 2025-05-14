@@ -1,6 +1,6 @@
 <script lang="ts">
   import { PUBLIC_HCAPTCHA_SITE_KEY, PUBLIC_USE_HCAPTCHA } from '$env/static/public'
-  import { H_CAPTCHA_ELEMENT_ID, H_CAPTCHA_TOKEN_INPUT_NAME } from '$lib/constants'
+  import { H_CAPTCHA_ELEMENT_ID } from '$lib/constants'
   import { onMount } from 'svelte'
 
   interface Props {
