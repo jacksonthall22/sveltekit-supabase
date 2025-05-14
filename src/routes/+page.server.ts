@@ -1,17 +1,17 @@
+import { getOrCreateUserProfile } from '$lib/auth/index.server'
 import { db } from '$lib/db/index.js'
 import { profileTable } from '$lib/db/schema.js'
-import { error, fail, json, redirect } from '@sveltejs/kit'
+import { error, fail } from '@sveltejs/kit'
 import { eq } from 'drizzle-orm'
-import type { PageServerLoad } from './$types'
-import { getOrCreateUserProfile } from '$lib/auth/index.server'
-import { z } from 'zod'
-import { superValidate, type SuperValidated } from 'sveltekit-superforms'
+import { message, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
+import { z } from 'zod'
+import type { PageServerLoad } from './$types'
 
 const formSchema = z.object({
-  firstName: z.string().default(''),
-  lastName: z.string().default(''),
-  email: z.string().email().default('')
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional()
 })
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -36,15 +36,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions = {
   default: async ({ request, locals }) => {
-    const user = await locals.safeGetSession()  
-    if (!user) return fail(401, { error: 'Unauthorized', form: null })
+    const form = await superValidate(request, zod(formSchema))
+    if (!form.valid) return fail(400, { form })
+
+    const user = await locals.safeGetSession()
+    if (!user) return fail(401, { form })
 
     const userProfile = await getOrCreateUserProfile(locals)
-  
-    console.log('test: userProfile:', userProfile)
-    console.log('test: request:', request)
-    const form = await superValidate(request, zod(formSchema))
-    if (!form.valid) return fail(400, { error: `Invalid form data`, form: null })
 
     try {
       await db
@@ -59,6 +57,6 @@ export const actions = {
       return fail(500, { error: 'Failed to update profile', form })
     }
 
-    return { success: true, form }
+    return message(form, 'Profile updated successfully!')
   }
 }

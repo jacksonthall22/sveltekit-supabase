@@ -1,19 +1,14 @@
 <script lang="ts">
-  import { enhance } from '$app/forms'
   import Icon from '@iconify/svelte'
   import SuperDebug from 'sveltekit-superforms'
-  import { page } from '$app/state'
   import { superForm } from 'sveltekit-superforms'
 
   let { data } = $props()
   let user = $derived(data.user)
 
-  const { form, errors, constraints, message, submitting, delayed } = superForm(data.form);
+  const { form, errors, constraints, message, submitting, delayed, enhance } = superForm(data.form);
 
-  let avatar = ''
-  let firstName: string = $state(`${$form.firstName}`)
-  let lastName: string = $state(`${$form.lastName}`)
-  let email: string = $state(`${$form.email}`)
+  const avatar = ''
 </script>
 
 {#if user}
@@ -27,7 +22,7 @@
 
   <div class="card card-lg">
     <div class="card-content">
-      <form method="post" action='?/signIn' use:enhance>
+      <form method="post" action='?' use:enhance>
         <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
           <legend class="fieldset-legend">Profile</legend>
 
@@ -49,7 +44,7 @@
           <input
             name="firstName"
             type="text"
-            bind:value={firstName}
+            bind:value={$form.firstName}
             class="input w-full"
             placeholder="Roofus"
           />
@@ -58,13 +53,13 @@
           <input
             name="lastName"
             type="text"
-            bind:value={lastName}
+            bind:value={$form.lastName}
             class="input"
             placeholder="n'Doofus"
           />
 
           <label for="email" class="label">Email</label>
-          <input name="email" type="email" bind:value={email} class="input" placeholder="Email" />
+          <input name="email" type="email" bind:value={$form.email} class="input" placeholder="Email" />
 
           <button type="submit" disabled={$submitting} class="btn btn-accent">
             {#if $delayed}

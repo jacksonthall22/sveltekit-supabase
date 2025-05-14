@@ -55,9 +55,7 @@
 
       <div class="flex gap-2">
         {#if session !== null}
-          <button class="btn btn-error">
-            <a href="/auth/logout">logout</a>
-          </button>
+          <a href="/auth/logout" class='btn'>Sign out</a>
         {/if}
         <ThemeController />
       </div>
