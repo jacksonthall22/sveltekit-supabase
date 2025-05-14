@@ -14,10 +14,10 @@ export const getOrCreateUserProfile = async (locals: App.Locals) => {
   if (!user) return error(500, 'Unauthorized')
 
   // If user data already exists in db, return it
-  const curProfile = await db.query.profileTable.findFirst({
+  const profile = await db.query.profileTable.findFirst({
     where: eq(profileTable.id, user.id)
   })
-  if (curProfile) return curProfile
+  if (profile) return profile
 
   // Otherwise create a new one
   await db.insert(profileTable).values({
