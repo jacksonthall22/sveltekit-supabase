@@ -5,7 +5,6 @@
   import SuperDebug from 'sveltekit-superforms'
 
   let { data } = $props()
-
   let { form, enhance, errors, constraints, message, delayed } = $derived(superForm(data.form))
 
   $effect(() => {
