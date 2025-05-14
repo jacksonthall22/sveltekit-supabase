@@ -17,5 +17,6 @@
     }
   },
   "explorer.sortOrder": "filesFirst",
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false
 }
