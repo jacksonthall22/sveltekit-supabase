@@ -9,14 +9,17 @@
   ],
   "mcp": {
     "servers": {
-     "Context7": {
-       "type": "stdio",
-       "command": "npx",
-       "args": ["-y", "@upstash/context7-mcp@latest"]
-     }
+      "Context7": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
+      }
     }
   },
   "explorer.sortOrder": "filesFirst",
   "editor.tabSize": 2,
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "files.exclude": {
+    "**/.svelte-kit": true
+  }
 }
