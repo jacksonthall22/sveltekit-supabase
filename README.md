@@ -57,6 +57,11 @@ cp .env.example .env.local
 supabase start
 ```
 
+# TODO:
+Doc for these changes:
+- Need to change `Site URL` in supabase project settings, ex. `https://supabase.com/dashboard/project/<project_id>/auth/url-configuration`
+- Need to change email templates accoring to PKCE docs [here](https://supabase.com/docs/guides/auth/passwords?queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit&queryGroups=language&language=js#resetting-a-password)
+
 **Note:** You need to have the [Supabase CLI](https://supabase.io/docs/guides/cli) installed to run the above command.
 
 5. Supabase console will be available at `http://localhost:54323`
@@ -67,7 +72,7 @@ supabase start
 pnpm run dev
 ```
 
-7. Navigate to [localhost:5173](http://localhost:3000) to see your app running.
+7. Navigate to [localhost:5173](http://localhost:5173) to see your app running.
 
 ### Deploying to Vercel
 
