@@ -13,7 +13,7 @@
     return path.map((p, i) => ({
       name: p,
       href: '/' + path.slice(0, i + 1).join('/'),
-      title: p.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase())
+      title: p.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
     }))
   })
 
@@ -84,7 +84,7 @@
   <footer class="w-full border-t py-5">
     <div class="mx-auto flex w-full max-w-2xl items-center justify-center">
       <a href="https://github.com/engageintellect" class="text-sm">@engageintellect</a>
-      <a href="https://linkedin.com/in/jackson-t-hall" class="text-sm ml-2">@jacksonthall22</a>
+      <a href="https://linkedin.com/in/jackson-t-hall" class="ml-2 text-sm">@jacksonthall22</a>
     </div>
   </footer>
 </div>
