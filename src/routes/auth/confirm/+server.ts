@@ -1,10 +1,9 @@
 import type { EmailOtpType } from '@supabase/supabase-js'
 import { redirect } from '@sveltejs/kit'
-
 import type { RequestHandler } from './$types'
+import { error } from '@sveltejs/kit'
 
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
-  // console.log(`[CONFIRM +server.ts GET] test: url: ${url}`)
   const token_hash = url.searchParams.get('token_hash')
   const type = url.searchParams.get('type') as EmailOtpType | null
   const next = url.searchParams.get('next') ?? '/'
@@ -22,14 +21,17 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   redirectTo.searchParams.delete('type')
 
   if (token_hash && type) {
-    const { error, data } = await supabase.auth.verifyOtp({ type, token_hash })
-    // console.log(`[CONFIRM +server.ts GET] test: verifyOtp() data: ${JSON.stringify(data)}`)
-    if (!error) {
-      redirectTo.searchParams.delete('next')
-      redirect(303, redirectTo)
-    } else {
-      // console.error(`[CONFIRM +server.ts GET] verifyOtp error: ${error}`)
+    const { error: verifyError } = await supabase.auth.verifyOtp({ type, token_hash })
+    if (verifyError) {
+      if (verifyError.status === 429)
+        return error(429, {
+          message: 'Too many requests. Please try again later.',
+        })
+      return error(400, { message: 'Invalid token or token expired.' })
     }
+
+    redirectTo.searchParams.delete('next')
+    return redirect(303, redirectTo)
   }
 
   redirectTo.pathname = '/auth/error'
