@@ -3,7 +3,7 @@
   import { invalidate } from '$app/navigation'
   import { onMount } from 'svelte'
   import ThemeController from '$lib/components/ThemeController.svelte'
-  
+
   // Log the current page route whenever it changes
   import { page } from '$app/state'
 
@@ -49,32 +49,36 @@
 </script>
 
 <div class="flex min-h-screen flex-col">
-  <nav class="border-b p-2">
-    <div class="mx-auto flex w-full max-w-2xl items-center justify-between">
-      <a href="/" class="text-2xl font-bold">App</a>
+  <div class="flex flex-col [&>*]:p-2">
+    <nav class="border-b">
+      <div class="mx-auto flex w-full max-w-2xl items-center justify-between">
+        <a href="/" class="text-2xl font-bold">App</a>
 
-      <div class="flex gap-2">
-        {#if session !== null}
-          <a href="/auth/logout" class='btn'>Sign out</a>
-        {/if}
-        <ThemeController />
-      </div>
-    </div>
-  </nav>
-
-  <div class="breadcrumbs w-full max-w-2xl mx-auto text-sm">
-    <ul>
-      <li><a href="/">Home</a></li>
-      {#each breadcrumbs as crumb}
-        <li>
-          {#if crumb.href}
-            <a href="{crumb.href}">{crumb.title}</a>
-          {:else}
-            {crumb.title}
+        <div class="flex gap-2">
+          {#if session !== null}
+            <a href="/auth/logout" class="btn">Sign out</a>
           {/if}
-        </li>
-      {/each}
-    </ul>
+          <ThemeController />
+        </div>
+      </div>
+    </nav>
+
+    <nav>
+      <div class="breadcrumbs mx-auto w-full max-w-2xl text-sm">
+        <ul>
+          <li><a href="/">Home</a></li>
+          {#each breadcrumbs as crumb}
+            <li>
+              {#if crumb.href}
+                <a href={crumb.href}>{crumb.title}</a>
+              {:else}
+                {crumb.title}
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      </div>
+    </nav>
   </div>
 
   <main class="mx-auto w-full max-w-2xl flex-grow px-2 py-5 md:px-0">
