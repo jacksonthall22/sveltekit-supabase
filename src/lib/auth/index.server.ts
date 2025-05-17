@@ -28,7 +28,7 @@ export const getOrCreateUserProfile = async (locals: App.Locals) => {
   })
 
   const newProfile = await db.query.profileTable.findFirst({
-    where: eq(profileTable.id, user.id)
+    where: eq(profileTable.id, user.id),
   })
   if (!newProfile) return error(500, 'Could not create profile')
 
