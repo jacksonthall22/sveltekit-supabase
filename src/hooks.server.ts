@@ -38,10 +38,6 @@ const supabase: Handle = async ({ event, resolve }) => {
       data: { session }
     } = await event.locals.supabase.auth.getSession()
 
-    // console.log(
-    //   `[HOOKS: supabase()] test: event.locals.safeGetSession() session: ${JSON.stringify(session)}`
-    // )
-
     if (!session) {
       return { session: null, user: null }
     }
