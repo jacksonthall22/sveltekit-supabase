@@ -22,7 +22,6 @@
   {/if}
 {/if}
 
-
 <form method="POST" class="card-body" use:enhance>
   <fieldset class="fieldset py-4">
     <legend class="fieldset-legend text-lg">Reset password</legend>

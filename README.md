@@ -58,7 +58,9 @@ supabase start
 ```
 
 # TODO:
+
 Doc for these changes:
+
 - Need to change `Site URL` in supabase project settings, ex. `https://supabase.com/dashboard/project/<project_id>/auth/url-configuration`
 - Need to change email templates accoring to PKCE docs [here](https://supabase.com/docs/guides/auth/passwords?queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit&queryGroups=language&language=js#resetting-a-password)
 

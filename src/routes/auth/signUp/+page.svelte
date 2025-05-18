@@ -6,9 +6,8 @@
 
   let { data } = $props()
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
-    superForm(data.form)
+    superForm(data.form),
   )
-
 </script>
 
 {#if $message}
@@ -35,7 +34,7 @@
     {/if}
 
     <label class="floating-label">
-      <span class='!text-lg'>Password</span>
+      <span class="!text-lg">Password</span>
       <input
         type="password"
         name="password"
@@ -50,7 +49,7 @@
     {/if}
 
     <label class="floating-label">
-      <span class='!text-lg'>Confirm password</span>
+      <span class="!text-lg">Confirm password</span>
       <input
         type="password"
         name="confirmPassword"
@@ -66,7 +65,7 @@
 
     <div class="grid grid-cols-2 gap-4">
       <label class="floating-label">
-        <span class='!text-lg'>First name</span>
+        <span class="!text-lg">First name</span>
         <input
           type="text"
           name="firstName"
@@ -82,7 +81,7 @@
         <div class="text-error">{$errors.firstName}</div>
       {/if}
       <label class="floating-label">
-        <span class='!text-lg'>Last name</span>
+        <span class="!text-lg">Last name</span>
         <input
           type="text"
           name="lastName"

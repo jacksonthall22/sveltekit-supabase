@@ -15,7 +15,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
   // Delete the user from the `profile` table. We do this as a transaction in case we are in an unexpected states (read below).
   await db.transaction(async tx => {
     const deletedRows = await db.delete(profileTable).where(eq(profileTable.id, userId)).returning()
-    
+
     // User has a session in `event.locals.user`, but no corresponding row in the `profile` table (we should have created
     // the user's profile data when they signed up).
     if (deletedRows.length === 0) {

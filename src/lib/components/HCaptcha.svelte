@@ -13,9 +13,9 @@
 
     window.hcaptcha.render(H_CAPTCHA_ELEMENT_ID, {
       sitekey: PUBLIC_HCAPTCHA_SITE_KEY,
-      callback: (response) => {
+      callback: response => {
         token = response
-      }
+      },
     })
   })
 </script>

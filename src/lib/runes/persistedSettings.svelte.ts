@@ -11,17 +11,17 @@ export const siteSettings = persistedState<SiteSettings>(
   {
     theme: 'light',
     // fontSize: 16,
-    notifications: true
+    notifications: true,
   },
   {
     storage: 'local',
     syncTabs: true,
-    beforeWrite: (value) => {
+    beforeWrite: value => {
       // console.log('test: Saving preferences:', $state.snapshot(value))
       return value
     },
-    onWriteError: (error) => {
+    onWriteError: error => {
       console.error('Failed to save preferences:', error)
-    }
-  }
+    },
+  },
 )

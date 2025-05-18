@@ -34,14 +34,7 @@
           </div>
 
           <label for="email" class="label mt-2">Email</label>
-          <input
-            id="email"
-            type="email"
-            class="input"
-            value={user.email}
-            disabled
-            readonly
-          />
+          <input id="email" type="email" class="input" value={user.email} disabled readonly />
 
           <label for="firstName" class="label">First name</label>
           <input
@@ -97,16 +90,18 @@
       type="button"
       class="btn btn-error mt-4"
       onclick={async () => {
-        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        if (
+          confirm('Are you sure you want to delete your account? This action cannot be undone.')
+        ) {
           const res = await fetch('/auth/deleteAccount', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: user.id })
+            body: JSON.stringify({ userId: user.id }),
           })
           if (res.ok) {
-            window.location.href = '/';
+            window.location.href = '/'
           } else {
-            alert('Failed to delete account.');
+            alert('Failed to delete account.')
           }
         }
       }}
