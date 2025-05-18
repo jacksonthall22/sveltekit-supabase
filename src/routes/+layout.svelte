@@ -23,7 +23,6 @@
   // https://supabase.com/docs/guides/auth/server-side/sveltekit
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
-      console.log('test:', event, session)
       if (newSession?.expires_at !== session?.expires_at) {
         invalidate('supabase:auth')
       }

@@ -1,7 +1,7 @@
-import { redirect } from "@sveltejs/kit";
+import { redirect } from '@sveltejs/kit'
 
 export const GET = async ({ locals: { supabase } }) => {
-  await supabase.auth.signOut();
+  await supabase.auth.signOut()
 
-  redirect(307, "/");
-};
+  redirect(307, '/')
+}

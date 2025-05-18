@@ -24,7 +24,6 @@ export const getOrCreateUserProfile = async (locals: App.Locals) => {
     id: user.id,
     firstName: '',
     lastName: '',
-    email: user.email ?? ''
   })
 
   const newProfile = await db.query.profileTable.findFirst({

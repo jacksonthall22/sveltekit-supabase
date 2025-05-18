@@ -8,8 +8,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const type = url.searchParams.get('type') as EmailOtpType | null
   const next = url.searchParams.get('next') ?? '/'
 
-  // console.log(`[CONFIRM +server.ts GET] test: token_hash: ${token_hash}`)
-
   /**
    * Clean up the redirect URL by deleting the Auth flow parameters.
    *

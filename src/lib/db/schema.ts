@@ -4,5 +4,4 @@ export const profileTable = pgTable('profile', {
   id: uuid('id').primaryKey(),
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
-  email: text('email').notNull(),
 })

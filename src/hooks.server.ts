@@ -28,7 +28,7 @@ const supabase: Handle = async ({ event, resolve }) => {
 
   /**
    * Creates an Admin Supabase client specific to this server request.
-   * 
+   *
    * Supabase provides both an `anon` key and a `service_role` key that are granted
    * different RLS (row-level security) policies for accessing the Postgres database.
    * The `event.locals.supabase` client should be used by default as it uses the `anon`
@@ -93,18 +93,12 @@ const supabase: Handle = async ({ event, resolve }) => {
 }
 
 const authGuard: Handle = async ({ event, resolve }) => {
-  // console.log(`[HOOKS: authGuard()] test: authGuard() event.url.pathname: "${event.url.pathname}"`)
   const { session, user } = await event.locals.safeGetSession()
   event.locals.session = session
   event.locals.user = user
 
-  if (!event.locals.session && event.url.pathname.startsWith('/private')) {
-    redirect(303, '/auth')
-  }
-
-  if (event.locals.session && event.url.pathname === '/auth') {
-    redirect(303, '/private')
-  }
+  if (!event.locals.session && event.url.pathname.startsWith('/private')) redirect(303, '/auth')
+  if (event.locals.session && event.url.pathname.startsWith('/auth')) redirect(303, '/private')
 
   return resolve(event)
 }

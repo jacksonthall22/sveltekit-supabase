@@ -8,13 +8,12 @@
 
   const { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
     superForm(data.form, {
-      // These allow form to be submitted multiple times and prevent page's `load()` function from re-running.
-      // Weirdly, the form will disappear after a successful submission if these are not set.
+      // These options allow form to be submitted multiple times and prevent page's `load()` function
+      // from re-running. The form disappears after a successful submission if these are not set.
       invalidateAll: false,
       resetForm: false,
     }),
   )
-  const avatar = ''
 </script>
 
 {#if $message}
@@ -22,25 +21,27 @@
 {/if}
 
 {#if user}
-  <div class="card card-lg">
-    <div class="card-content mx-auto flex flex-col gap-4">
-      <form method="post" use:enhance>
-        <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-          <legend class="fieldset-legend">Profile</legend>
+  <div class="flex flex-col gap-4 [&>*]:mx-auto [&>*]:w-xs">
+    <form method="post" use:enhance class="card rounded-box border-base-300 border">
+      <div class="card-body">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend text-lg">Profile</legend>
 
-          {#if avatar}
-            <div class="avatar max-w-fit">
-              <div class="w-24 rounded">
-                <img src={avatar} alt="User avatar" />
-              </div>
+          <div class="avatar avatar-online avatar-placeholder max-w-fit">
+            <div class="bg-neutral text-neutral-content w-16 rounded-full">
+              <span class="text-xl">{$form.firstName?.at(0) ?? '?'}</span>
             </div>
-          {:else}
-            <div class="avatar avatar-online avatar-placeholder max-w-fit">
-              <div class="bg-neutral text-neutral-content w-16 rounded-full">
-                <span class="text-xl">{$form.firstName?.at(0) ?? '?'}</span>
-              </div>
-            </div>
-          {/if}
+          </div>
+
+          <label for="email" class="label mt-2">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="input"
+            value={user.email}
+            disabled
+            readonly
+          />
 
           <label for="firstName" class="label">First name</label>
           <input
@@ -49,7 +50,7 @@
             bind:value={$form.firstName}
             {...$constraints.firstName}
             aria-invalid={$errors.firstName ? 'true' : undefined}
-            class="input w-full"
+            class="input"
             placeholder="Roofus"
           />
           {#if $errors.firstName}
@@ -69,24 +70,49 @@
           {#if $errors.lastName}
             <p class="text-error text-sm">{JSON.stringify($errors.lastName)}</p>
           {/if}
+        </fieldset>
+        {#if $errors._errors}
+          <p class="text-error text-sm">{JSON.stringify($errors._errors)}</p>
+        {/if}
 
-          <button type="submit" disabled={$submitting} class="btn btn-accent">
+        <div class="card-actions">
+          <button type="submit" disabled={$submitting} class="btn btn-primary">
             {#if $delayed}
               <div class="loading loading-dots h-8 w-8"></div>
             {:else}
               Update Profile
             {/if}
           </button>
-        </fieldset>
-        {#if $errors._errors}
-          <p class="text-error text-sm">{JSON.stringify($errors._errors)}</p>
-        {/if}
-      </form>
-
-      <div class="w-xs">
-        <SuperDebug bind:data={$form} collapsible />
+        </div>
       </div>
-    </div>
+    </form>
+
+    <SuperDebug bind:data={$form} collapsible />
+
+    <a href="/private" class="btn btn-accent">
+      Go to protected <code>/private</code> route
+    </a>
+
+    <button
+      type="button"
+      class="btn btn-error mt-4"
+      onclick={async () => {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+          const res = await fetch('/auth/deleteAccount', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id })
+          })
+          if (res.ok) {
+            window.location.href = '/';
+          } else {
+            alert('Failed to delete account.');
+          }
+        }
+      }}
+    >
+      Delete account
+    </button>
   </div>
 {:else}
   <div class="hero min-h-72 ring-1">

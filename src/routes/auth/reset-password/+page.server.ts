@@ -4,23 +4,21 @@ import type { PageServerLoad } from './$types'
 import { z } from 'zod'
 import type { SuperValidated } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
-import { setError, superValidate } from 'sveltekit-superforms'
-import { message } from 'sveltekit-superforms'
+import { message, setError, superValidate } from 'sveltekit-superforms'
 import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 
 const schema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string().email(),
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
   hCaptchaToken: z.string().optional(),
 })
 
-export type SignUpFormValidated = SuperValidated<z.infer<typeof schema>>
+export type ResetPasswordFormValidated = SuperValidated<z.infer<typeof schema>>
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+  const { user } = locals
+  if (!user) return redirect(302, '/auth/signIn')
   const form = await superValidate(zod(schema))
   return { form }
 }
@@ -28,10 +26,8 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
   default: async ({ request, locals: { supabase } }) => {
     const form = await superValidate(request, zod(schema))
-
     if (!form.valid) return fail(400, { form })
 
-    // Check if passwords match
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
@@ -39,14 +35,14 @@ export const actions: Actions = {
     if (PUBLIC_USE_HCAPTCHA && !form.data.hCaptchaToken)
       return setError(form, 'hCaptchaToken', 'hCaptcha verification failed')
 
-    const { error } = await supabase.auth.signUp({
-      email: form.data.email,
-      password: form.data.password,
-      options: PUBLIC_USE_HCAPTCHA ? { captchaToken: form.data.hCaptchaToken! } : undefined,
-    })
+    const { error } = await supabase.auth.updateUser({ password: form.data.password })
 
-    if (error) return fail(500, { error, form })
+    if (error) {
+      if (error?.code === 'same_password')
+        return setError(form, '', 'New password cannot be the same as the old password')
+      return fail(500, { form, error })
+    }
 
-    return message(form, 'Sign up successful!')
+    return message(form, 'Password updated!')
   },
 }

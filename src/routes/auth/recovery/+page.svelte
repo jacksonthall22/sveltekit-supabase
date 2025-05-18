@@ -1,33 +1,48 @@
 <script lang="ts">
-  import { enhance } from '$app/forms'
+  import { superForm } from 'sveltekit-superforms'
+
+  const { data } = $props()
+  const { form, errors, constraints, message, submitting, delayed, enhance } = superForm(data.form)
 </script>
 
-<h1 class="mb-4 text-center text-3xl font-bold">Reset password</h1>
+{#if $message}
+  <h3>{$message}</h3>
+{/if}
 
+<form method="POST" class="card-body" use:enhance>
+  <fieldset class="fieldset w-xs py-4">
+    <legend class="fieldset-legend text-lg">Reset password</legend>
 
-<form
-  method="POST"
-  action="?/resetPassword"
-  class="mx-auto mt-16 max-w-md space-y-6 rounded-lg p-8 shadow card"
-  use:enhance
->
-  <div class="form-control">
-    <label for="email" class="label">
-      <span class="label-text">Email</span>
+    <label for="email" class="floating-label">
+      <span>Email</span>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        placeholder="Enter your email"
+        class="input input-bordered w-full"
+        bind:value={$form.email}
+        aria-invalid={$errors.email ? 'true' : undefined}
+        {...$constraints.email}
+        required
+      />
     </label>
-    <input
-      type="email"
-      name="email"
-      id="email"
-      placeholder="Enter your email"
-      class="input input-bordered w-full"
-      required
-    />
-  </div>
+    {#if $errors.email}
+      <div class="text-error">{$errors.email}</div>
+    {/if}
+  </fieldset>
 
-  <div class="form-control">
-    <button type="submit" class="btn btn-primary w-full">
-      Send reset link
+  {#if $errors._errors}
+    <div class="text-error">{$errors._errors}</div>
+  {/if}
+
+  <div class="card-actions">
+    <button type="submit" class="btn btn-primary" disabled={$submitting}>
+      {#if $delayed}
+        <div class="loading loading-dots h-8 w-8"></div>
+      {:else}
+        Send reset link
+      {/if}
     </button>
   </div>
 </form>

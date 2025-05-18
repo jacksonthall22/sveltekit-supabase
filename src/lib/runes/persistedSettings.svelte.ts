@@ -17,7 +17,7 @@ export const siteSettings = persistedState<SiteSettings>(
     storage: 'local',
     syncTabs: true,
     beforeWrite: (value) => {
-      console.log('test: Saving preferences:', $state.snapshot(value))
+      // console.log('test: Saving preferences:', $state.snapshot(value))
       return value
     },
     onWriteError: (error) => {

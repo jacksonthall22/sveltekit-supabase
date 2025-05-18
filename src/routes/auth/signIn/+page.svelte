@@ -1,68 +1,83 @@
 <script lang="ts">
   import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
   import HCaptcha from '$lib/components/HCaptcha.svelte'
-  import { superForm } from 'sveltekit-superforms'
-  import SuperDebug from 'sveltekit-superforms'
+  import SuperDebug, { superForm } from 'sveltekit-superforms'
+  import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
 
   let { data } = $props()
-
-  let {
-    form,
-    enhance,
-    errors,
-    constraints,
-    message,
-    delayed
-  } = $derived(superForm(data.form))
-
-
-  $effect(() => {
-    // Focus on first error
-    if (Object.keys(errors).length) {
-      document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()
-    }
-  })
+  let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
+    superForm(data.form),
+  )
 </script>
 
-<div class="card card-border w-sm">
-  <form method="POST" action="?/signIn" class="card-body" use:enhance>
-    <label class="label block">
-      Email
+{#if $message}
+  <h3>{$message}</h3>
+{/if}
+
+<form method="POST" class="card-body" use:enhance>
+  <fieldset class="fieldset w-xs py-4">
+    <legend class="fieldset-legend text-lg">Sign in</legend>
+
+    <label class="floating-label">
+      <span>Email</span>
       <input
-        name="email"
         type="email"
+        name="email"
+        placeholder="first.last@example.com"
+        class="input input-md"
         bind:value={$form.email}
-        class="input block w-full"
-
+        aria-invalid={$errors.email ? 'true' : undefined}
+        {...$constraints.email}
+        required
+        autocomplete="email"
       />
     </label>
-
-    <label class="label block">
-      Password
-      <input
-        name="password"
-        bind:value={$form.password}
-        type="password"
-        class="input block w-full"
-      />
-    </label>
-
-    <a
-      href="/auth/signUp"
-      class="text-base-content/75 link text-left text-sm"
-    >
-      Create an account
-    </a>
-    <a href="/auth/recovery" class="text-base-content/75 link text-sm"> Forgot password? </a>
-
-    {#if PUBLIC_USE_HCAPTCHA}
-      <HCaptcha bind:token={$form.hCaptchaToken!} />
+    {#if $errors.email}
+      <div class="text-error">{$errors.email}</div>
     {/if}
 
-    <div class="card-actions">
-      <button type="submit" class="btn btn-primary">Sign in</button>
-    </div>
-  </form>
-</div>
+    <label class="floating-label">
+      <span>Password</span>
+      <input
+        type="password"
+        name="password"
+        placeholder="********"
+        class="input input-md"
+        bind:value={$form.password}
+        aria-invalid={$errors.password ? 'true' : undefined}
+        {...$constraints.password}
+        required
+        autocomplete="current-password"
+      />
+    </label>
+    {#if $errors.password}
+      <div class="text-error">{$errors.password}</div>
+    {/if}
+  </fieldset>
+  {#if $errors._errors}
+    <div class="text-error">{$errors._errors}</div>
+  {/if}
 
-<SuperDebug bind:data={$form} />
+  <a href="/auth/signUp" class="text-base-content/75 link w-max text-left text-sm">
+    Create an account
+  </a>
+  <ForgotPasswordLink />
+
+  {#if PUBLIC_USE_HCAPTCHA}
+    <HCaptcha bind:token={$form.hCaptchaToken!} />
+  {/if}
+
+  <div class="card-actions">
+    <button type="submit" class="btn btn-primary" disabled={$submitting}>
+      {#if $delayed}
+        <div class="loading loading-dots h-8 w-8"></div>
+      {:else}
+        Sign in
+      {/if}
+    </button>
+  </div>
+</form>
+
+<div class="p-4">
+  <SuperDebug bind:data={form} collapsible />
+</div>
