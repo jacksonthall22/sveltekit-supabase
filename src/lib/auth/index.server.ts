@@ -15,7 +15,7 @@ export const getOrCreateUserProfile = async (locals: App.Locals) => {
 
   // If user data already exists in db, return it
   const profile = await db.query.profileTable.findFirst({
-    where: eq(profileTable.id, user.id)
+    where: eq(profileTable.id, user.id),
   })
   if (profile) return profile
 
