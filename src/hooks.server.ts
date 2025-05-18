@@ -1,12 +1,10 @@
+import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import { type Handle, redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
-
 const supabase: Handle = async ({ event, resolve }) => {
-  // console.log(`[HOOKS: supabase()] test: event.url.pathname: "${event.url.pathname}"`)
-
   /**
    * Creates a Supabase client specific to this server request.
    *
@@ -20,13 +18,42 @@ const supabase: Handle = async ({ event, resolve }) => {
        * the cookie options. Setting `path` to `/` replicates previous/
        * standard behavior.
        */
-      setAll: (cookiesToSet) => {
+      setAll: cookiesToSet => {
         cookiesToSet.forEach(({ name, value, options }) => {
           event.cookies.set(name, value, { ...options, path: '/' })
         })
-      }
-    }
+      },
+    },
   })
+
+  /**
+   * Creates an Admin Supabase client specific to this server request.
+   * 
+   * Supabase provides both an `anon` key and a `service_role` key that are granted
+   * different RLS (row-level security) policies for accessing the Postgres database.
+   * The `event.locals.supabase` client should be used by default as it uses the `anon`
+   * key that follows stricter RLS policies, but this `event.locals.supabaseAdmin` client
+   * may be used for operations that require elevated privileges, such as deleting users.
+   */
+  event.locals.supabaseAdmin = createServerClient(
+    PUBLIC_SUPABASE_URL,
+    PRIVATE_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      cookies: {
+        getAll: () => event.cookies.getAll(),
+        /**
+         * SvelteKit's cookies API requires `path` to be explicitly set in
+         * the cookie options. Setting `path` to `/` replicates previous/
+         * standard behavior.
+         */
+        setAll: cookiesToSet => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            event.cookies.set(name, value, { ...options, path: '/' })
+          })
+        },
+      },
+    },
+  )
 
   /**
    * Unlike `supabase.auth.getSession()`, which returns the session _without_
@@ -35,7 +62,7 @@ const supabase: Handle = async ({ event, resolve }) => {
    */
   event.locals.safeGetSession = async () => {
     const {
-      data: { session }
+      data: { session },
     } = await event.locals.supabase.auth.getSession()
 
     if (!session) {
@@ -44,7 +71,7 @@ const supabase: Handle = async ({ event, resolve }) => {
 
     const {
       data: { user },
-      error
+      error,
     } = await event.locals.supabase.auth.getUser()
     if (error) {
       // JWT validation has failed
@@ -61,7 +88,7 @@ const supabase: Handle = async ({ event, resolve }) => {
        * headers, so we need to tell SvelteKit to pass it through.
        */
       return name === 'content-range' || name === 'x-supabase-api-version'
-    }
+    },
   })
 }
 
@@ -71,18 +98,11 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  // console.log(
-  //   `[HOOKS] test: event.url.pathname: "${event.url.pathname}" session: ${JSON.stringify(session)}, user: ${JSON.stringify(user)}`
-  // )
-
   if (!event.locals.session && event.url.pathname.startsWith('/private')) {
     redirect(303, '/auth')
   }
 
-  // console.log(`[HOOKS] test: PASSED authGuard(), user: ${user}, session: ${session}`)
-
   if (event.locals.session && event.url.pathname === '/auth') {
-    // console.log(`[HOOKS] test: authGuard() found session, redirecting to '/private'...`)
     redirect(303, '/private')
   }
 
