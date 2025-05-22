@@ -25,7 +25,7 @@ export const load: PageServerLoad = async () => {
   return { form }
 }
 
-export const actions: Actions = {
+export const actions = {
   default: async ({ request, locals: { supabase } }) => {
     const form = await superValidate(request, zod(schema))
 
@@ -49,4 +49,4 @@ export const actions: Actions = {
 
     return message(form, 'Sign up successful!')
   },
-}
+} satisfies Actions

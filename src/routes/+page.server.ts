@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 import { message, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { z } from 'zod'
-import type { PageServerLoad } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 
 const schema = z.object({
   firstName: z.string(),
@@ -57,4 +57,4 @@ export const actions = {
 
     return message(form, 'Profile updated!')
   },
-}
+} satisfies Actions

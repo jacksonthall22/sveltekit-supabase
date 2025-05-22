@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return { form }
 }
 
-export const actions: Actions = {
+export const actions = {
   default: async ({ request, locals: { supabase } }) => {
     const form = await superValidate(request, zod(schema))
     if (!form.valid) return fail(400, { form })
@@ -45,4 +45,4 @@ export const actions: Actions = {
 
     return message(form, 'Password updated!')
   },
-}
+} satisfies Actions
