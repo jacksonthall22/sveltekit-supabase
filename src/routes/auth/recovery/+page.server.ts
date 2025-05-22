@@ -1,10 +1,9 @@
-import type { PageServerLoad, Actions } from './$types'
-import { fail, redirect } from '@sveltejs/kit'
-import { z } from 'zod'
 import { getOrCreateUserProfile } from '$lib/auth/index.server'
-import { message, superValidate } from 'sveltekit-superforms/server'
+import { error, fail } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
-import { error } from '@sveltejs/kit'
+import { message, superValidate } from 'sveltekit-superforms/server'
+import { z } from 'zod'
+import type { Actions } from './$types'
 
 const schema = z.object({
   email: z.string().email(),
