@@ -32,7 +32,7 @@ export const load = async ({ locals }) => {
 }
 
 export const actions = {
-  default: async ({ url, request, locals }) => {
+  default: async ({ request, locals }) => {
     const { supabase } = locals
     const form = await superValidate(request, zod(schema))
 

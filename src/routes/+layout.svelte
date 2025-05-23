@@ -6,6 +6,7 @@
 
   // Log the current page route whenever it changes
   import { page } from '$app/state'
+  import LogoutButton from '$lib/components/LogoutButton.svelte'
 
   let breadcrumbs = $derived.by(() => {
     const { pathname } = page.url
@@ -55,7 +56,7 @@
 
         <div class="flex gap-2">
           {#if session !== null}
-            <a href="/auth/logout" class="btn">Sign out</a>
+            <LogoutButton {session} />
           {/if}
           <ThemeController />
         </div>
