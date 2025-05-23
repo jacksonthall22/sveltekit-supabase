@@ -1,7 +1,7 @@
-import { redirect } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 
-export const GET = async ({ locals: { supabase } }) => {
-  await supabase.auth.signOut()
-
-  redirect(307, '/')
+export const POST = async ({ locals: { supabase } }) => {
+  const { error: logoutError } = await supabase.auth.signOut()
+  if (logoutError) return error(500, 'Logout failed')
+  return redirect(307, '/auth/signIn')
 }
