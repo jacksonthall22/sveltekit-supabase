@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
         return error(429, {
           message: 'Too many requests. Please try again later.',
         })
-      return error(400, { message: 'Invalid token or token expired.' })
+      return error(400, 'Invalid token or token expired.')
     }
 
     redirectTo.searchParams.delete('next')

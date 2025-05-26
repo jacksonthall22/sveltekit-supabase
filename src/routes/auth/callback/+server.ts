@@ -10,7 +10,7 @@ export const GET = async (event) => {
 
   if (code) {
     const { error: authError } = await supabase.auth.exchangeCodeForSession(code)
-    if (authError) return error(500, { message: 'Failed to exchange code for session' })
+    if (authError) return error(500, 'Failed to exchange code for session')
     return redirect(303, `/${next.slice(1)}`)
   }
 
