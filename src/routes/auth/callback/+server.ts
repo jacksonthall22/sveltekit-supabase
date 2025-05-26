@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 
 export const GET = async (event) => {
   const {
@@ -9,12 +9,13 @@ export const GET = async (event) => {
   const next = url.searchParams.get('next') ?? '/'
 
   if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-      throw redirect(303, `/${next.slice(1)}`)
-    }
+    const { error: authError } = await supabase.auth.exchangeCodeForSession(code)
+    if (authError) return error(500, { message: 'Failed to exchange code for session' })
+    return redirect(303, `/${next.slice(1)}`)
   }
 
-  // return the user to an error page with instructions
-  throw redirect(303, '/auth/auth-code-error')
+  // Return the user to an error page with instructions
+  // TODO: Figure out what a good behavior is here
+  // return error(400, { message: 'Authorization code is missing' })
+  return redirect(303, '/auth/auth-code-error')
 }
