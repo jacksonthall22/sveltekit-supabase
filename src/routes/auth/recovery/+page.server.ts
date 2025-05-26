@@ -15,7 +15,7 @@ export const load = async ({ locals }) => {
     let email: string | undefined = undefined
     if (user) {
       // Supabase user object should always have an email set
-      if (!user.email) return error(500, 'Internal error')
+      if (!user.email) error(500, 'Internal error')
       email = user.email
     }
 

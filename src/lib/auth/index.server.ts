@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm'
  */
 export const getOrCreateUserProfile = async (locals: App.Locals) => {
   const { user } = await locals.safeGetSession()
-  if (!user) return error(500, 'Unauthorized')
+  if (!user) error(500, 'Unauthorized')
 
   // If user data already exists in db, return it
   const profile = await db.query.profileTable.findFirst({
@@ -29,7 +29,7 @@ export const getOrCreateUserProfile = async (locals: App.Locals) => {
   const newProfile = await db.query.profileTable.findFirst({
     where: eq(profileTable.id, user.id),
   })
-  if (!newProfile) return error(500, 'Could not create profile')
+  if (!newProfile) error(500, 'Could not create profile')
 
   return newProfile
 }

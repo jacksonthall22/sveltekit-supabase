@@ -5,6 +5,6 @@ export const actions = {
   default: async ({ locals: { supabase } }) => {
     const { error: logoutError } = await supabase.auth.signOut()
     if (logoutError) return fail(500, { error: 'Logout failed' })
-    return redirect(303, '/')
+    redirect(303, '/')
   },
 } satisfies Actions

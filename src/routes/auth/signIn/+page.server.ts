@@ -41,6 +41,6 @@ export const actions = {
 
     if (error) return fail(500, { form })
 
-    return redirect(303, '/')
+    redirect(303, '/')
   },
 } satisfies Actions

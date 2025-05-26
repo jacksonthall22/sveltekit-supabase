@@ -18,7 +18,7 @@ export type ResetPasswordFormValidated = SuperValidated<z.infer<typeof schema>>
 
 export const load: PageServerLoad = async ({ locals }) => {
   const { user } = locals
-  if (!user) return redirect(302, '/auth/signIn')
+  if (!user) redirect(302, '/auth/signIn')
   const form = await superValidate(zod(schema))
   return { form }
 }

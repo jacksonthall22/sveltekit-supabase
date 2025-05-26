@@ -22,14 +22,14 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
     const { error: verifyError } = await supabase.auth.verifyOtp({ type, token_hash })
     if (verifyError) {
       if (verifyError.status === 429)
-        return error(429, {
+        error(429, {
           message: 'Too many requests. Please try again later.',
         })
-      return error(400, 'Invalid token or token expired.')
+      error(400, 'Invalid token or token expired.')
     }
 
     redirectTo.searchParams.delete('next')
-    return redirect(303, redirectTo)
+    redirect(303, redirectTo)
   }
 
   redirectTo.pathname = '/auth/error'

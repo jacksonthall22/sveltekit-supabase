@@ -10,12 +10,12 @@ export const GET = async (event) => {
 
   if (code) {
     const { error: authError } = await supabase.auth.exchangeCodeForSession(code)
-    if (authError) return error(500, 'Failed to exchange code for session')
-    return redirect(303, `/${next.slice(1)}`)
+    if (authError) error(500, 'Failed to exchange code for session')
+    redirect(303, `/${next.slice(1)}`)
   }
 
   // Return the user to an error page with instructions
   // TODO: Figure out what a good behavior is here
-  // return error(400, { message: 'Authorization code is missing' })
-  return redirect(303, '/auth/auth-code-error')
+  // error(400, { message: 'Authorization code is missing' })
+  redirect(303, '/auth/auth-code-error')
 }
