@@ -6,7 +6,7 @@
 
   // Log the current page route whenever it changes
   import { page } from '$app/state'
-  import LogoutButton from '$lib/components/LogoutButton.svelte'
+  import SignInButton from '$lib/components/SignInButton.svelte'
 
   const { data, children } = $props()
   const { supabase, session } = $derived(data)
@@ -24,9 +24,8 @@
   // https://supabase.com/docs/guides/auth/server-side/sveltekit
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
-      if (newSession?.expires_at !== session?.expires_at) {
-        invalidate('supabase:auth')
-      }
+      if (newSession?.expires_at !== session?.expires_at) invalidate('supabase:auth')
+
       if (event === 'INITIAL_SESSION') {
         // handle initial session
       } else if (event === 'SIGNED_IN') {
@@ -42,9 +41,7 @@
       }
     })
 
-    return () => {
-      data.subscription.unsubscribe()
-    }
+    return () => data.subscription.unsubscribe()
   })
 </script>
 
@@ -55,8 +52,8 @@
         <a href="/" class="text-2xl font-bold">App</a>
 
         <div class="flex gap-2">
-          {#if session !== null}
-            <LogoutButton {session} />
+          {#if !page.url.pathname.includes('signIn')}
+            <SignInButton {session} />
           {/if}
           <ThemeController />
         </div>
