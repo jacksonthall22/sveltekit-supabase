@@ -13,7 +13,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
   if (userId !== user.id) return error(403, 'You can only delete your own account') // RLS should also prevent this
 
   // Delete the user from the `profile` table. We do this as a transaction in case we are in an unexpected states (read below).
-  await db.transaction(async tx => {
+  await db.transaction(async (tx) => {
     const deletedRows = await db.delete(profileTable).where(eq(profileTable.id, userId)).returning()
 
     // User has a session in `event.locals.user`, but no corresponding row in the `profile` table (we should have created
