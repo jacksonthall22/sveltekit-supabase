@@ -18,7 +18,7 @@ const supabase: Handle = async ({ event, resolve }) => {
        * the cookie options. Setting `path` to `/` replicates previous/
        * standard behavior.
        */
-      setAll: cookiesToSet => {
+      setAll: (cookiesToSet) => {
         cookiesToSet.forEach(({ name, value, options }) => {
           event.cookies.set(name, value, { ...options, path: '/' })
         })
@@ -46,7 +46,7 @@ const supabase: Handle = async ({ event, resolve }) => {
          * the cookie options. Setting `path` to `/` replicates previous/
          * standard behavior.
          */
-        setAll: cookiesToSet => {
+        setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             event.cookies.set(name, value, { ...options, path: '/' })
           })

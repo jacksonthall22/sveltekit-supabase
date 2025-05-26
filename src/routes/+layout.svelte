@@ -8,18 +8,18 @@
   import { page } from '$app/state'
   import LogoutButton from '$lib/components/LogoutButton.svelte'
 
+  const { data, children } = $props()
+  const { supabase, session } = $derived(data)
+
   let breadcrumbs = $derived.by(() => {
     const { pathname } = page.url
     const path = pathname.split('/').filter(Boolean)
     return path.map((p, i) => ({
       name: p,
       href: '/' + path.slice(0, i + 1).join('/'),
-      title: p.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
+      title: p.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
     }))
   })
-
-  const { data, children } = $props()
-  const { supabase, session } = $derived(data)
 
   // https://supabase.com/docs/guides/auth/server-side/sveltekit
   onMount(() => {
