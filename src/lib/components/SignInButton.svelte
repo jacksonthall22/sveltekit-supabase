@@ -7,8 +7,6 @@
   }
   let { session }: Props = $props()
 
-  $inspect('session', session)
-
   let { delayed, submitting, enhance } = superForm({})
 </script>
 
