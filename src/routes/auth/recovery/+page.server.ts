@@ -10,22 +10,11 @@ const schema = z.object({
 })
 
 export const load = async ({ locals }) => {
-  try {
-    const { user } = await locals.safeGetSession()
-    let email: string | undefined = undefined
-    if (user) {
-      // Supabase user object should always have an email set
-      if (!user.email) error(500, 'Internal error')
-      email = user.email
-    }
-
-    // Get other user profile data from the database
-    const userProfile = await getOrCreateUserProfile(locals)
-
-    const form = await superValidate({ email }, zod(schema))
-    form.message = `You're already signed in! Welcome back, ${userProfile.firstName}!`
+  const { user } = await locals.safeGetSession()
+  if (user) {
+    const form = await superValidate({ email: user.email }, zod(schema))
     return { form }
-  } catch (error) {
+  } else {
     const form = await superValidate(zod(schema))
     return { form }
   }
@@ -35,6 +24,7 @@ export const actions = {
   default: async ({ request, locals }) => {
     const { supabase } = locals
     const form = await superValidate(request, zod(schema))
+    if (!form.valid) return fail(400, { form })
 
     const { error } = await supabase.auth.resetPasswordForEmail(form.data.email, {
       redirectTo: 'http://localhost:5173/auth/confirm',
@@ -43,7 +33,7 @@ export const actions = {
     if (error) {
       if (error.status === 429)
         return fail(429, { form, error: 'Too many requests. Please try again later.' })
-      return fail(400, { form })
+      return fail(500, { form })
     }
 
     return message(form, 'Password reset email sent! Please check your inbox.')
