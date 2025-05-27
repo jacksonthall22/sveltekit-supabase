@@ -100,9 +100,23 @@
     {#if $errors.firstName}
       <div class="text-error">{$errors.firstName}</div>
     {/if}
+
+    <div class="card-actions">
+      <button type="submit" class="btn btn-primary" disabled={$submitting}>
+        {#if $delayed}
+          <div class="loading loading-dots loading-sm"></div>
+        {:else}
+          Create account
+        {/if}
+      </button>
+    </div>
   </fieldset>
   {#if $errors._errors}
     <div class="text-error">{$errors._errors}</div>
+  {/if}
+
+  {#if PUBLIC_USE_HCAPTCHA}
+    <HCaptcha bind:token={$form.hCaptchaToken!} />
   {/if}
 
   <fieldset class="fieldset">
@@ -111,20 +125,6 @@
     </a>
     <ForgotPasswordLink />
   </fieldset>
-
-  {#if PUBLIC_USE_HCAPTCHA}
-    <HCaptcha bind:token={$form.hCaptchaToken!} />
-  {/if}
-
-  <div class="card-actions">
-    <button type="submit" class="btn btn-primary" disabled={$submitting}>
-      {#if $delayed}
-        <div class="loading loading-dots h-8 w-8"></div>
-      {:else}
-        Create account
-      {/if}
-    </button>
-  </div>
 </form>
 
 <div class="p-4">

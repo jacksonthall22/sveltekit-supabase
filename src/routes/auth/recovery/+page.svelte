@@ -39,7 +39,7 @@
   <div class="card-actions">
     <button type="submit" class="btn btn-primary" disabled={$submitting}>
       {#if $delayed}
-        <div class="loading loading-dots h-8 w-8"></div>
+        <div class="loading loading-dots loading-sm"></div>
       {:else}
         Send reset link
       {/if}

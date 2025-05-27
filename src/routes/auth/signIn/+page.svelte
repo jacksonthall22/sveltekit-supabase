@@ -53,29 +53,34 @@
     {#if $errors.password}
       <div class="text-error">{$errors.password}</div>
     {/if}
+
+    {#if PUBLIC_USE_HCAPTCHA}
+      <HCaptcha bind:token={$form.hCaptchaToken!} />
+    {/if}
+    {#if $errors.hCaptchaToken}
+      <div class="text-error">{$errors.hCaptchaToken}</div>
+    {/if}
+
+    <div class="card-actions">
+      <button type="submit" class="btn btn-primary" disabled={$submitting}>
+        {#if $delayed}
+          <div class="loading loading-dots loading-sm"></div>
+        {:else}
+          Sign in
+        {/if}
+      </button>
+    </div>
   </fieldset>
   {#if $errors._errors}
     <div class="text-error">{$errors._errors}</div>
   {/if}
 
+  <fieldset class="fieldset">
   <a href="/auth/signUp" class="text-base-content/75 link w-max text-left text-sm">
     Create an account
   </a>
   <ForgotPasswordLink />
-
-  {#if PUBLIC_USE_HCAPTCHA}
-    <HCaptcha bind:token={$form.hCaptchaToken!} />
-  {/if}
-
-  <div class="card-actions">
-    <button type="submit" class="btn btn-primary" disabled={$submitting}>
-      {#if $delayed}
-        <div class="loading loading-dots h-8 w-8"></div>
-      {:else}
-        Sign in
-      {/if}
-    </button>
-  </div>
+  </fieldset>
 </form>
 
 <div class="p-4">
