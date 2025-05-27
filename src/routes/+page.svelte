@@ -78,6 +78,7 @@
             {/if}
           </button>
         </div>
+        <a href='/auth/recovery' class='link'>Change password</a>
       </div>
     </form>
 
