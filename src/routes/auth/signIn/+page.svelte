@@ -76,10 +76,10 @@
   {/if}
 
   <fieldset class="fieldset">
-  <a href="/auth/signUp" class="text-base-content/75 link w-max text-left text-sm">
-    Create an account
-  </a>
-  <ForgotPasswordLink />
+    <a href="/auth/signUp" class="text-base-content/75 link w-max text-left text-sm">
+      Create an account
+    </a>
+    <ForgotPasswordLink />
   </fieldset>
 </form>
 
