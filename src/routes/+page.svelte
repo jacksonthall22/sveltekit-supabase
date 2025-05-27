@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DeleteAccountButton from '$lib/components/DeleteAccountButton.svelte'
   import Icon from '@iconify/svelte'
   import SuperDebug from 'sveltekit-superforms'
   import { superForm } from 'sveltekit-superforms'
@@ -86,28 +87,7 @@
       Go to protected <code>/private</code> route
     </a>
 
-    <button
-      type="button"
-      class="btn btn-error mt-4"
-      onclick={async () => {
-        if (
-          confirm('Are you sure you want to delete your account? This action cannot be undone.')
-        ) {
-          const res = await fetch('/auth/deleteAccount', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: user.id }),
-          })
-          if (res.ok) {
-            window.location.href = '/'
-          } else {
-            alert('Failed to delete account.')
-          }
-        }
-      }}
-    >
-      Delete account
-    </button>
+    <DeleteAccountButton />
   </div>
 {:else}
   <div class="hero min-h-72 ring-1">
