@@ -1,13 +1,13 @@
-import { redirect, fail } from '@sveltejs/kit'
-import type { Actions } from './$types'
-import type { PageServerLoad } from './$types'
-import { z } from 'zod'
-import type { SuperValidated } from 'sveltekit-superforms'
-import { zod } from 'sveltekit-superforms/adapters'
-import { setError, superValidate } from 'sveltekit-superforms'
-import { message } from 'sveltekit-superforms'
 import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
+import { db } from '$lib/db'
+import { profileTable } from '$lib/db/schema'
+import { fail, redirect } from '@sveltejs/kit'
+import type { SuperValidated } from 'sveltekit-superforms'
+import { setError, superValidate } from 'sveltekit-superforms'
+import { zod } from 'sveltekit-superforms/adapters'
+import { z } from 'zod'
+import type { Actions, PageServerLoad } from './$types'
 
 const schema = z.object({
   firstName: z.string(),
@@ -39,14 +39,26 @@ export const actions = {
     if (PUBLIC_USE_HCAPTCHA && !form.data.hCaptchaToken)
       return setError(form, 'hCaptchaToken', 'hCaptcha verification failed')
 
-    const { error } = await supabase.auth.signUp({
+    const { error: authError, data } = await supabase.auth.signUp({
       email: form.data.email,
       password: form.data.password,
       options: PUBLIC_USE_HCAPTCHA ? { captchaToken: form.data.hCaptchaToken! } : undefined,
     })
+    if (authError) {
+      if (authError.code === 'user_already_exists')
+        return setError(form, 'email', 'Email already in use')
+      return fail(500, { authError, form })
+    }
 
-    if (error) return fail(500, { error, form })
+    // If there was no error above, then the `profile` table should have a new row with `id` as
+    // the same Supabase Auth `id` of the newly created user. Update that row with the user's first/last name.
+    const row = await db
+      .insert(profileTable)
+      .values({ id: data.user!.id, firstName: form.data.firstName, lastName: form.data.lastName })
+      .returning()
+    if (!row || row.length === 0)
+      fail(500, { form, error: 'Failed to create user profile in database' })
 
-    return message(form, 'Sign up successful!')
+    return redirect(303, '/')
   },
 } satisfies Actions
