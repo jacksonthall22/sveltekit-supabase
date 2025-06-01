@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
+    "@sveltejs/enhanced-img": "^0.6.0",
     "@sveltejs/kit": "^2.20.8",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@types/eslint": "^9.6.1",
@@ -39,6 +40,7 @@
     "tw-animate-css": "^1.2.8",
     "typescript": "^5.8.3",
     "vite": "^6.3.4",
+    "vite-plugin-kit-routes": "^0.8.4",
     "zod": "^3.24.3"
   },
   "type": "module",

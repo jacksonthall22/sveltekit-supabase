@@ -1,7 +1,5 @@
 import { ReactiveQueue } from '$lib/utils/reactiveQueue.svelte'
 
-const DEFAULT_DURATION_MS = 3000
-
 export class Toast {
   static _nextId = 0
   public id: number
@@ -34,9 +32,7 @@ class Toaster extends ReactiveQueue<Toast> {
     if (toast.durationMs !== Infinity) setTimeout(() => this.remove(toast.id), toast.durationMs)
   }
 
-  /**
-   * Remove a toast by its ID. Returns the removed toast, or null if the ID was not found.
-   */
+  /** Remove a toast by its ID. Returns the removed toast, or null if the ID was not found. */
   public remove(id: number): Toast | null {
     const i = this._items.findIndex((t) => t.id === id)
     if (i === -1) return null
