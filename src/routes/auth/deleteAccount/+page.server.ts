@@ -29,14 +29,17 @@ export const actions = {
         tx.rollback()
         return fail(500, { error: 'Server error' })
       }
+
+      // Sign the user out
+      await supabase.auth.signOut()
+  
+      // Delete user account
+      const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
+      if (authError) {
+        tx.rollback()
+        return fail(500, { error: 'Failed to delete user' })
+      }
     })
-
-    // Sign the user out
-    await supabase.auth.signOut()
-
-    // Delete user account
-    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
-    if (authError) return fail(500, { error: 'Failed to delete user' })
 
     return redirect(303, '/')
   },
