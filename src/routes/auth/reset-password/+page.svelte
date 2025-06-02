@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { route } from '$lib/ROUTES.js'
   import { superForm } from 'sveltekit-superforms'
 
   let { data } = $props()
@@ -13,11 +14,11 @@
   <h3 class="text-center text-lg font-semibold">{$message}</h3>
   {#if !user}
     <p class="text-center">
-      <a href="/auth/login" class="link">Login</a>
+      <a href={route("/auth/signIn")} class="link">Login</a>
     </p>
   {:else}
     <p class="text-center">
-      <a href="/" class="link">Home</a>
+      <a href={route("/")} class="link">Home</a>
     </p>
   {/if}
 {/if}

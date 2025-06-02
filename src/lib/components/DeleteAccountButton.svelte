@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
   import { superForm } from 'sveltekit-superforms'
-  import type { SubmitFunction } from '@sveltejs/kit'
+  import { route } from '$lib/ROUTES'
 
   let user = $derived(page.data.session ? page.data.session.user : null)
 
@@ -10,7 +10,7 @@
 
 <form
   method="POST"
-  action="/auth/deleteAccount"
+  action={route('default /auth/deleteAccount')}
   use:enhance={{
     onSubmit: ({ cancel }) => {
       if (!confirm('Are you sure you want to delete your account? This action cannot be undone.'))

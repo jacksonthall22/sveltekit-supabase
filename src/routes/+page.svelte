@@ -1,5 +1,6 @@
 <script lang="ts">
   import DeleteAccountButton from '$lib/components/DeleteAccountButton.svelte'
+  import { route } from '$lib/ROUTES.js'
   import { Toast, toaster } from '$lib/runes/toaster.svelte.js'
   import Icon from '@iconify/svelte'
   import SuperDebug, { superForm } from 'sveltekit-superforms'
@@ -79,13 +80,13 @@
             {/if}
           </button>
         </div>
-        <a href='/auth/recovery' class='link'>Change password</a>
+        <a href={route('/auth/recovery')} class="link">Change password</a>
       </div>
     </form>
 
     <SuperDebug bind:data={$form} collapsible />
 
-    <a href="/private" class="btn btn-accent">
+    <a href={route('/private')} class="btn btn-accent">
       Go to protected <code>/private</code> route
     </a>
 
@@ -99,7 +100,7 @@
         <div>+</div>
         <Icon icon="logos:supabase-icon" class="h-24 w-24" />
       </div>
-      <a href="/auth/signIn" class="btn btn-lg btn-block">Login</a>
+      <a href={route('/auth/signIn')} class="btn btn-lg btn-block">Login</a>
     </div>
   </div>
 {/if}

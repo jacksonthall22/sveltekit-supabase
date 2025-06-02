@@ -3,6 +3,7 @@
   import HCaptcha from '$lib/components/HCaptcha.svelte'
   import SuperDebug, { superForm } from 'sveltekit-superforms'
   import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
+  import { route } from '$lib/ROUTES'
 
   let { data } = $props()
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
@@ -76,7 +77,7 @@
   {/if}
 
   <fieldset class="fieldset">
-    <a href="/auth/signUp" class="text-base-content/75 link w-max text-left text-sm">
+    <a href={route('/auth/signUp')} class="text-base-content/75 link w-max text-left text-sm">
       Create an account
     </a>
     <ForgotPasswordLink />

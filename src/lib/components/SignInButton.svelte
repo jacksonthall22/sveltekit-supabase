@@ -7,7 +7,7 @@
 </script>
 
 {#if page.data.session}
-  <form method="POST" action="/auth/signOut" use:enhance>
+  <form method="POST" action={route('default /auth/signOut')} use:enhance>
     <button type="submit" class="btn" disabled={$delayed || $submitting}>
       {#if $delayed}
         <span class="loading loading-dots loading-sm"></span>
@@ -17,5 +17,5 @@
     </button>
   </form>
 {:else}
-  <a class="btn" href="/auth/signIn"> Sign in </a>
+  <a class="btn" href={route('/auth/signIn')}> Sign in </a>
 {/if}

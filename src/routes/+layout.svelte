@@ -4,6 +4,7 @@
   import SignInButton from '$lib/components/SignInButton.svelte'
   import ThemeController from '$lib/components/ThemeController.svelte'
   import Toaster from '$lib/components/Toaster.svelte'
+  import { route } from '$lib/ROUTES'
   import { onMount } from 'svelte'
   import '../app.css'
 
@@ -48,7 +49,7 @@
   <div class="flex flex-col [&>*]:p-2">
     <nav class="border-b">
       <div class="mx-auto flex w-full max-w-2xl items-center justify-between">
-        <a href="/" class="text-2xl font-bold">App</a>
+        <a href={route('/')} class="text-2xl font-bold">App</a>
 
         <div class="flex gap-2">
           {#if !page.url.pathname.includes('signIn')}
@@ -62,7 +63,7 @@
     <nav>
       <div class="breadcrumbs mx-auto w-full max-w-2xl text-sm">
         <ul>
-          <li><a href="/">Home</a></li>
+          <li><a href={route('/')}>Home</a></li>
           {#each breadcrumbs as crumb}
             <li>
               {#if crumb.href}
