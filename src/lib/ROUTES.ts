@@ -24,8 +24,7 @@ const PAGES = {
  */
 const SERVERS = {
   "GET /auth/callback": `/auth/callback`,
-  "GET /auth/confirm": `/auth/confirm`,
-  "DELETE /auth/deleteAccount": `/auth/deleteAccount`
+  "GET /auth/confirm": `/auth/confirm`
 }
 
 /**
@@ -154,7 +153,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 */
 export type KIT_ROUTES = {
   PAGES: { '/': never, '/auth/error': never, '/auth/recovery': never, '/auth/reset-password': never, '/auth/signIn': never, '/auth/signUp': never, '/private': never, '/testToaster': never }
-  SERVERS: { 'GET /auth/callback': never, 'GET /auth/confirm': never, 'DELETE /auth/deleteAccount': never }
+  SERVERS: { 'GET /auth/callback': never, 'GET /auth/confirm': never }
   ACTIONS: { 'default /': never, 'default /auth/deleteAccount': never, 'default /auth/recovery': never, 'default /auth/reset-password': never, 'default /auth/signIn': never, 'default /auth/signOut': never, 'default /auth/signUp': never }
   LINKS: Record<string, never>
   Params: Record<string, never>
