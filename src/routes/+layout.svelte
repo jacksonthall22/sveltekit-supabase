@@ -1,12 +1,11 @@
 <script>
-  import '../app.css'
   import { invalidate } from '$app/navigation'
-  import { onMount } from 'svelte'
-  import ThemeController from '$lib/components/ThemeController.svelte'
-
-  // Log the current page route whenever it changes
   import { page } from '$app/state'
   import SignInButton from '$lib/components/SignInButton.svelte'
+  import ThemeController from '$lib/components/ThemeController.svelte'
+  import Toaster from '$lib/components/Toaster.svelte'
+  import { onMount } from 'svelte'
+  import '../app.css'
 
   const { data, children } = $props()
   const { supabase, session } = $derived(data)
@@ -88,4 +87,6 @@
       <a href="https://linkedin.com/in/jackson-t-hall" class="ml-2 text-sm">@jacksonthall22</a>
     </div>
   </footer>
+
+  <Toaster />
 </div>
