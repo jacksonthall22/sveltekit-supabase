@@ -1,16 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/state'
+  import { route } from '$lib/ROUTES'
   import { superForm } from 'sveltekit-superforms'
-  import type { Session } from '@supabase/supabase-js'
-
-  interface Props {
-    session: Session | null
-  }
-  let { session }: Props = $props()
 
   let { delayed, submitting, enhance } = superForm({})
 </script>
 
-{#if session}
+{#if page.data.session}
   <form method="POST" action="/auth/signOut" use:enhance>
     <button type="submit" class="btn" disabled={$delayed || $submitting}>
       {#if $delayed}

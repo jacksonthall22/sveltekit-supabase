@@ -53,7 +53,7 @@
 
         <div class="flex gap-2">
           {#if !page.url.pathname.includes('signIn')}
-            <SignInButton {session} />
+            <SignInButton />
           {/if}
           <ThemeController />
         </div>
