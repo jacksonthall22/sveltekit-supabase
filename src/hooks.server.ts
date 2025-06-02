@@ -1,5 +1,7 @@
 import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { DAISY_UI_THEMES } from '$lib/constants'
+import { siteSettings } from '$lib/runes/persistedSettings.svelte'
 import { createServerClient } from '@supabase/ssr'
 import { type Handle, redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
@@ -101,4 +103,17 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event)
 }
 
-export const handle: Handle = sequence(supabase, authGuard)
+const setTheme: Handle = async ({ event, resolve }) => {
+  // Based on:
+  // https://scottspence.com/posts/cookie-based-theme-selection-in-sveltekit-with-daisyui
+  const theme = siteSettings.current.theme
+  if (!theme || !DAISY_UI_THEMES.includes(theme)) return resolve(event)
+
+  return resolve(event, {
+    transformPageChunk({ html }) {
+      return html.replace(`data-theme=""`, `data-theme="${theme}"`)
+    },
+  })
+}
+
+export const handle: Handle = sequence(supabase, authGuard, setTheme)
