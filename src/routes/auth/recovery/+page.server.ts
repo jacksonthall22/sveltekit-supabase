@@ -36,6 +36,9 @@ export const actions = {
       return fail(500, { form })
     }
 
-    return message(form, 'Password reset email sent! Please check your inbox.')
+    return message(
+      form,
+      `If your email exists in our database, we've sent a email to reset your password!`,
+    )
   },
 } satisfies Actions
