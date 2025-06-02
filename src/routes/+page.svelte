@@ -1,8 +1,8 @@
 <script lang="ts">
   import DeleteAccountButton from '$lib/components/DeleteAccountButton.svelte'
+  import { Toast, toaster } from '$lib/runes/toaster.svelte.js'
   import Icon from '@iconify/svelte'
-  import SuperDebug from 'sveltekit-superforms'
-  import { superForm } from 'sveltekit-superforms'
+  import SuperDebug, { superForm } from 'sveltekit-superforms'
 
   let { data } = $props()
   let user = $derived(data.user)
@@ -15,11 +15,12 @@
       resetForm: false,
     }),
   )
-</script>
 
-{#if $message}
-  <h3>{$message}</h3>
-{/if}
+  // svelte-ignore state_referenced_locally
+  message.subscribe((msg) => {
+    toaster.push(new Toast(msg, 'info', 10000))
+  })
+</script>
 
 {#if user}
   <div class="flex flex-col gap-4 [&>*]:mx-auto [&>*]:w-xs">
