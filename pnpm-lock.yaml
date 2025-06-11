@@ -57,8 +57,8 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1(@sveltejs/kit@2.20.8(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.28.2)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)))(svelte@5.28.2)(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)))
       svelte-persisted-state:
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@5.28.2)
+        specifier: ^1.2.0
+        version: 1.2.0(svelte@5.28.2)
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.2.0
@@ -2470,8 +2470,8 @@ packages:
     peerDependencies:
       svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
-  svelte-persisted-state@1.0.0:
-    resolution: {integrity: sha512-+yVknmQULtlJ1Q0UOmtICPnUpyoIvtON9q+WGMkbXBcFT/2QeMdynsmgZL/T+C40IegmTMZyr+oGZhyaiL+jgQ==}
+  svelte-persisted-state@1.2.0:
+    resolution: {integrity: sha512-zNPfLNH3vG/e0JXYU+rEkDNXnD8OhE5IzJfMnWIFYRxOcg1Ngc0x5uP4RdJKUdRsVjNLL6zBYPiQdzrYbxLoMQ==}
     peerDependencies:
       svelte: ^5.0.0-next.1
 
@@ -4723,7 +4723,7 @@ snapshots:
     dependencies:
       svelte: 5.28.2
 
-  svelte-persisted-state@1.0.0(svelte@5.28.2):
+  svelte-persisted-state@1.2.0(svelte@5.28.2):
     dependencies:
       svelte: 5.28.2
 

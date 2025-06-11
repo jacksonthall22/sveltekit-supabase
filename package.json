@@ -61,7 +61,7 @@
     "postcss-load-config": "^6.0.1",
     "postgres": "^3.4.5",
     "svelte-captcha-enhance": "^1.2.1",
-    "svelte-persisted-state": "^1.0.0",
+    "svelte-persisted-state": "^1.2.0",
     "tailwind-merge": "^3.2.0",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.5",
