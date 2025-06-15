@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { siteSettings } from '$lib/runes/persistedSettings.svelte'
+  import { DaisyUITheme } from '$lib/constants'
+  import { setTheme, siteSettings } from '$lib/runes/siteSettings.svelte'
 
-  let isDark = $state(siteSettings.current.theme === 'dark')
+  let isDark = $state(siteSettings.current.theme === DaisyUITheme.dark)
 </script>
 
 <label class="swap swap-rotate">
@@ -9,8 +10,7 @@
   <input
     type="checkbox"
     bind:checked={isDark}
-    onchange={() => (siteSettings.current.theme = isDark ? 'dark' : 'light')}
-    class="theme-controller"
+    onchange={() => setTheme(isDark ? DaisyUITheme.dark : DaisyUITheme.light)}
     value="dark"
   />
 
