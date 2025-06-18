@@ -32,7 +32,6 @@ export const siteSettings = persistedState<SiteSettings>(
 )
 
 export const setTheme = (theme: DaisyUITheme) => {
-  console.debug(`Setting theme to: ${theme}`)
   // Validate the theme against the schema
   const parsedTheme = siteSettingsSchema.shape.theme.safeParse(theme)
   if (!parsedTheme.success) {
