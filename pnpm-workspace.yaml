@@ -1,2 +1,7 @@
 onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - bufferutil
   - esbuild
+  - sharp
+  - supabase
+  - utf-8-validate
