@@ -6,8 +6,6 @@ import { eq } from 'drizzle-orm'
 /**
  * Get or create the **stored** user profile from the database, based on the `user` in `locals.safeGetSession()`.
  * If one does not exist, returns a 500 error.
- * @param locals
- * @returns
  */
 export const getOrCreateUserProfile = async (locals: App.Locals) => {
   const { user } = await locals.safeGetSession()
