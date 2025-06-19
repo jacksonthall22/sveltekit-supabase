@@ -1,5 +1,4 @@
-import { getOrCreateUserProfile } from '$lib/auth/index.server'
-import { error, fail } from '@sveltejs/kit'
+import { fail } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
 import { message, superValidate } from 'sveltekit-superforms/server'
 import { z } from 'zod'
