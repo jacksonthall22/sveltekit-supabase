@@ -31,7 +31,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "supabase": "^2.22.12",
+    "supabase": "^2.26.9",
     "svelte": "^5.28.2",
     "svelte-check": "^4.1.6",
     "sveltekit-superforms": "^2.27.0",
@@ -51,7 +51,7 @@
   "dependencies": {
     "@iconify/svelte": "^5.0.0",
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.49.4",
+    "@supabase/supabase-js": "^2.50.0",
     "@sveltejs/adapter-vercel": "^5.7.2",
     "@tailwindcss/vite": "^4.1.5",
     "bufferutil": "^4.0.9",
