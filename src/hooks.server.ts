@@ -109,7 +109,8 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 /**
  * Apply site settings from cookies to the HTML response. Currently this handles
- * setting the saved theme 
+ * setting the saved DaisyUI theme, but could easily be extended to handle
+ * reading/applying other site settings!
  */
 const applySavedSiteSettings: Handle = async ({ event, resolve }) => {
   // Based on:
