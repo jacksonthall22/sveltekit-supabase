@@ -17,8 +17,8 @@ export const actions = {
         .where(eq(profileTable.id, user.id))
         .returning()
 
-      // User has a session in `event.locals.user`, but no corresponding row in the `profile` table (we should have created
-      // the user's profile data when they signed up).
+      // User has a session in `event.locals.user`, but no corresponding row in the `profile` table 
+      // (we should have created the user's profile data when they signed up).
       if (deletedRows.length === 0) {
         tx.rollback()
         return fail(500, { error: 'Failed to delete user data' })
