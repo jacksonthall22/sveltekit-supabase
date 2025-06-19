@@ -44,7 +44,8 @@ const ACTIONS = {
  * LINKS
  */
 const LINKS = {
-  
+  "jacksonLinkedin": `https://linkedin.com/in/jackson-t-hall`,
+  "engageintellectGithub": `https://github.com/engageintellect`
 }
 
 type ParamValue = string | number | undefined
@@ -155,6 +156,6 @@ export type KIT_ROUTES = {
   PAGES: { '/': never, '/auth/error': never, '/auth/recovery': never, '/auth/reset-password': never, '/auth/signIn': never, '/auth/signUp': never, '/private': never, '/testToaster': never }
   SERVERS: { 'GET /auth/callback': never, 'GET /auth/confirm': never }
   ACTIONS: { 'default /': never, 'default /auth/deleteAccount': never, 'default /auth/recovery': never, 'default /auth/reset-password': never, 'default /auth/signIn': never, 'default /auth/signOut': never, 'default /auth/signUp': never }
-  LINKS: Record<string, never>
+  LINKS: { 'jacksonLinkedin': never, 'engageintellectGithub': never }
   Params: Record<string, never>
 }

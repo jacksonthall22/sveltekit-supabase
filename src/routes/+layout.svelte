@@ -84,8 +84,8 @@
 
   <footer class="w-full border-t py-5">
     <div class="mx-auto flex w-full max-w-2xl items-center justify-center">
-      <a href="https://github.com/engageintellect" class="text-sm">@engageintellect</a>
-      <a href="https://linkedin.com/in/jackson-t-hall" class="ml-2 text-sm">@jacksonthall22</a>
+      <a href={route('engageintellectGithub')} class="text-sm">@engageintellect</a>
+      <a href={route('jacksonLinkedin')} class="ml-2 text-sm">@jacksonthall22</a>
     </div>
   </footer>
 
