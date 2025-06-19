@@ -11,23 +11,26 @@ const schema = z.object({
 
 export const load = async ({ locals }) => {
   const { user } = await locals.safeGetSession()
-  if (user) {
-    const form = await superValidate({ email: user.email }, zod(schema))
-    return { form }
-  } else {
+
+  // Return empty form if the user is not logged in (account recovery)
+  if (!user) {
     const form = await superValidate(zod(schema))
     return { form }
   }
+
+  // Otherwise, pre-fill form with the user's email if logged in (password reset)
+  const form = await superValidate({ email: user.email }, zod(schema))
+  return { form }
 }
 
 export const actions = {
   default: async ({ request, locals }) => {
-    const { supabase } = locals
     const form = await superValidate(request, zod(schema))
     if (!form.valid) return fail(400, { form })
 
+    const { supabase } = locals
     const { error } = await supabase.auth.resetPasswordForEmail(form.data.email, {
-      redirectTo: 'http://localhost:5173/auth/confirm',
+      redirectTo: 'http://localhost:5173/auth/confirm', // TODO: Use a dynamic URL
     })
 
     if (error) {
