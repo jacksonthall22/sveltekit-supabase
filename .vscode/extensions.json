@@ -3,6 +3,6 @@
     "svelte.svelte-vscode",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
-    "austenc.tailwind-docs",
+    "austenc.tailwind-docs"
   ]
 }

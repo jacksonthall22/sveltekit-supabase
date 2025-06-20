@@ -5,6 +5,7 @@
 A SvelteKit starter app with email/password login, and some other nice bells & whistles!
 
 ## Features
+
 - Supabase Authentication ([PKCE flow](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit))
   - Sign up/in/out
   - Change/recover password
@@ -33,35 +34,40 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 ## Getting Started
 
 1. Clone this repo
-    ```bash
-    git clone https://github.com/jacksonthall22/sveltekit-supabase
-    cd sveltekit-supabase
-    ```
+
+   ```bash
+   git clone https://github.com/jacksonthall22/sveltekit-supabase
+   cd sveltekit-supabase
+   ```
 
 1. Install dependencies
-    ```bash
-    pnpm i
-    ```
+
+   ```bash
+   pnpm i
+   ```
 
 1. [Create a Supabase project](https://supabase.com/dashboard/new). The free tier is fine!
 
 1. Create a `.env` based on `.env.example` and fill in your own credentials
-    ```bash
-    cp .env.example .env
-    ```
+
+   ```bash
+   cp .env.example .env
+   ```
 
 1. Push database schema to Supabase with [Drizzle](https://orm.drizzle.team/)
-    ```bash
-    # pnpm add -g drizzle-kit@latest
-    drizzle-kit generate && drizzle-kit migrate
-    ```
 
-    <sub>**Note:** `drizzle-kit push` is [currently bugged](https://github.com/drizzle-team/drizzle-orm/issues/3504) for RLS policies, which we use in drizzle.config.ts</sub>
+   ```bash
+   # pnpm add -g drizzle-kit@latest
+   drizzle-kit generate && drizzle-kit migrate
+   ```
+
+   <sub>**Note:** `drizzle-kit push` is [currently bugged](https://github.com/drizzle-team/drizzle-orm/issues/3504) for RLS policies, which we use in drizzle.config.ts</sub>
 
 1. Start your app
-    ```bash
-    pnpm dev
-    ```
+
+   ```bash
+   pnpm dev
+   ```
 
 1. Navigate to [`localhost:5173`](http://localhost:5173) to see your app running!
 
@@ -84,21 +90,21 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 1. Install the Vercel CLI
 
-    ```bash
-    pnpm add -g vercel
-    ```
+   ```bash
+   pnpm add -g vercel
+   ```
 
 1. Build
 
-    ```bash
-    pnpm build
-    ```
+   ```bash
+   pnpm build
+   ```
 
 1. Deploy!
 
-    ```bash
-    vercel --prod
-    ```
+   ```bash
+   vercel --prod
+   ```
 
 # Contributing
 

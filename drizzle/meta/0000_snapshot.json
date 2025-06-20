@@ -34,12 +34,8 @@
           "tableFrom": "profile",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -51,27 +47,21 @@
           "name": "Enable users to view their own data only",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "\"profile\".\"id\" = (select auth.uid())"
         },
         "Enable users to insert their own data only": {
           "name": "Enable users to insert their own data only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "\"profile\".\"id\" = (select auth.uid())"
         },
         "Enable users to update their own data only, not changing ID": {
           "name": "Enable users to update their own data only, not changing ID",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "\"profile\".\"id\" = (select auth.uid())",
           "withCheck": "\"profile\".\"id\" = (select auth.uid())"
         },
@@ -79,9 +69,7 @@
           "name": "Enable users to delete their own data only",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "\"profile\".\"id\" = (select auth.uid())"
         }
       },

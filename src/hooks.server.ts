@@ -129,7 +129,7 @@ const applySavedSiteSettings: Handle = async ({ event, resolve }) => {
   const theme: DaisyUITheme = parsedSiteSettings.data.theme
   if (!theme || !(theme in DaisyUITheme)) return resolve(event)
   setTheme(theme)
-  
+
   return resolve(event, {
     transformPageChunk({ html }) {
       return html.replace(`data-theme=""`, `data-theme="${theme}"`)

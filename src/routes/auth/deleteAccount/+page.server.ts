@@ -17,7 +17,7 @@ export const actions = {
         .where(eq(profileTable.id, user.id))
         .returning()
 
-      // User has a session in `event.locals.user`, but no corresponding row in the `profile` table 
+      // User has a session in `event.locals.user`, but no corresponding row in the `profile` table
       // (we should have created the user's profile data when they signed up).
       if (deletedRows.length === 0) {
         tx.rollback()
@@ -32,7 +32,7 @@ export const actions = {
 
       // Sign the user out
       await supabase.auth.signOut()
-  
+
       // Delete user account
       const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
       if (authError) {

@@ -24,8 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   const userData = await db.query.profileTable.findFirst({
     where: eq(profileTable.id, user.id),
     with: {
-      authUser: {
-      },
+      authUser: {},
     },
   })
   if (!userData) error(500, 'Database integrity error: no row found for user')
