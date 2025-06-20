@@ -1,3 +1,4 @@
+import { PUBLIC_SITE_URL } from '$env/static/public'
 import { fail } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
 import { message, superValidate } from 'sveltekit-superforms/server'
@@ -29,7 +30,7 @@ export const actions = {
 
     const { supabase } = locals
     const { error } = await supabase.auth.resetPasswordForEmail(form.data.email, {
-      redirectTo: 'http://localhost:5173/auth/confirm', // TODO: Use a dynamic URL
+      redirectTo: `${PUBLIC_SITE_URL}/auth/confirm`,
     })
 
     if (error) {
