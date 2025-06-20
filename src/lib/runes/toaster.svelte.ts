@@ -1,6 +1,5 @@
 import { ReactiveQueue } from '$lib/utils/reactiveQueue.svelte'
 
-
 export enum ToastType {
   Success = 'success',
   Error = 'error',
