@@ -19,6 +19,9 @@ import { pgPolicy, pgTable, text, uuid } from 'drizzle-orm/pg-core'
 import { authenticatedRole, authUid, authUsers } from 'drizzle-orm/supabase'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
 
+// This export is required for Drizzle relations to work properly
+export { authUsers }
+
 export const profileTable = pgTable(
   'profile',
   {
@@ -68,5 +71,3 @@ export const authUsersRelations = relations(authUsers, ({ one }) => ({
 export const profileTableRelations = relations(profileTable, ({ one }) => ({
   authUser: one(authUsers, { fields: [profileTable.id], references: [authUsers.id] }),
 }))
-
-export { authUsers } // ensure Supabase users table is registered in schema
