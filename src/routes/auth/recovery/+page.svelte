@@ -2,14 +2,13 @@
   import { superForm } from 'sveltekit-superforms'
 
   const { data } = $props()
-  const { form, errors, constraints, message, submitting, delayed, enhance } = superForm(
-    data.form,
-    {
+  const { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
+    superForm(data.form, {
       // These options allow form to be submitted multiple times and prevent page's `load()` function
       // from re-running. The form disappears after a successful submission if these are not set.
       invalidateAll: false,
       resetForm: false,
-    },
+    }),
   )
 </script>
 
