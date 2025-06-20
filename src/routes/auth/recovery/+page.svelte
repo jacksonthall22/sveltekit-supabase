@@ -28,7 +28,7 @@
 
 <form method="POST" class="card-body" use:enhance>
   <fieldset class="fieldset w-xs py-4">
-    <legend class="fieldset-legend text-lg">Reset password</legend>
+    <legend class="fieldset-legend text-lg">Recover account</legend>
 
     <label for="email" class="floating-label">
       <span>Email</span>

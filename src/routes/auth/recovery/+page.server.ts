@@ -1,9 +1,10 @@
 import { PUBLIC_SITE_URL } from '$env/static/public'
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
 import { message, superValidate } from 'sveltekit-superforms/server'
 import { z } from 'zod'
 import type { Actions } from './$types'
+import { route } from '$lib/ROUTES'
 
 const schema = z.object({
   email: z.string().email(),
@@ -12,14 +13,10 @@ const schema = z.object({
 export const load = async ({ locals }) => {
   const { user } = await locals.safeGetSession()
 
-  // Return empty form if the user is not logged in (account recovery)
-  if (!user) {
-    const form = await superValidate(zod(schema))
-    return { form }
-  }
+  // If the user is logged in, we can redirect them to reset password, email recovery won't be necessary
+  if (user) redirect(303, route('/auth/reset-password'))
 
-  // Otherwise, pre-fill form with the user's email if logged in (password reset)
-  const form = await superValidate({ email: user.email }, zod(schema))
+  const form = await superValidate(zod(schema))
   return { form }
 }
 
@@ -30,7 +27,7 @@ export const actions = {
 
     const { supabase } = locals
     const { error } = await supabase.auth.resetPasswordForEmail(form.data.email, {
-      redirectTo: `${PUBLIC_SITE_URL}/auth/confirm`,
+      redirectTo: PUBLIC_SITE_URL + route('/auth/reset-password'),
     })
 
     if (error) {

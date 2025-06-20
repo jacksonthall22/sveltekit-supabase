@@ -87,7 +87,7 @@
           {/if}
         </button>
       </div>
-      <a href={route('/auth/recovery')} class="link">Change password</a>
+      <a href={route('/auth/reset-password')} class="link">Change password</a>
     </div>
   </form>
 

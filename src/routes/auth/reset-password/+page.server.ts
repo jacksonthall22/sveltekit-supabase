@@ -7,6 +7,7 @@ import { zod } from 'sveltekit-superforms/adapters'
 import { message, setError, superValidate } from 'sveltekit-superforms'
 import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
+import { route } from '$lib/ROUTES'
 
 const schema = z.object({
   password: z.string().min(MIN_PASSWORD_LENGTH),
@@ -18,7 +19,7 @@ export type ResetPasswordFormValidated = SuperValidated<z.infer<typeof schema>>
 
 export const load: PageServerLoad = async ({ locals }) => {
   const { user } = locals
-  if (!user) redirect(302, '/auth/signIn')
+  if (!user) redirect(302, route('/auth/recovery'))
   const form = await superValidate(zod(schema))
   return { form }
 }
