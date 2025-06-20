@@ -1,26 +1,31 @@
 <script lang="ts">
   import { route } from '$lib/ROUTES.js'
+  import { Toast, toaster, ToastType } from '$lib/runes/toaster.svelte.js'
+  import { untrack } from 'svelte'
   import { superForm } from 'sveltekit-superforms'
 
   let { data } = $props()
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
-    superForm(data.form),
+    superForm(data.form, {
+      // These options allow form to be submitted multiple times and prevent page's `load()` function
+      // from re-running. The form disappears after a successful submission if these are not set.
+      invalidateAll: false,
+      resetForm: true,
+    }),
   )
-  let user = $derived(data.user)
-</script>
+  const anyErrors = $derived(Object.keys($errors).length > 0)
 
-{#if $message}
-  <h3 class="text-center text-lg font-semibold">{$message}</h3>
-  {#if !user}
-    <p class="text-center">
-      <a href={route('/auth/signIn')} class="link">Login</a>
-    </p>
-  {:else}
-    <p class="text-center">
-      <a href={route('/')} class="link">Home</a>
-    </p>
-  {/if}
-{/if}
+  $effect(() => {
+    // Show new toast popup when `message` changes
+    if ($message)
+      untrack(() => {
+        let toastType: ToastType
+        if (anyErrors) toastType = ToastType.Error
+        else toastType = ToastType.Info
+        toaster.push(new Toast($message, toastType, 5000))
+      })
+  })
+</script>
 
 <form method="POST" class="card-body" use:enhance>
   <fieldset class="fieldset py-4">
