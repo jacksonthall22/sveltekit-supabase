@@ -7,7 +7,6 @@
     superForm(data.form),
   )
   let user = $derived(data.user)
-  let hasErrors = $derived(Object.keys(errors).length > 0)
 </script>
 
 {#if $message}
