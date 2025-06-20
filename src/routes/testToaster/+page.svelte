@@ -1,17 +1,20 @@
 <script lang="ts">
-  import { Toast, toaster } from '$lib/runes/toaster.svelte'
+  import { Toast, toaster, ToastType } from '$lib/runes/toaster.svelte'
   import Toaster from '$lib/components/Toaster.svelte'
 
   let newToastMsg = $state('')
   let duration: number = $state(5000)
-  let toastType: 'info' | 'success' | 'error' = $state('info')
-
-  $inspect(toastType)
+  let toastTypeStr: 'info' | 'success' | 'error' = $state('info')
 </script>
 
 <form
   onsubmit={(e) => {
     e.preventDefault()
+    let toastType: ToastType
+    if (toastTypeStr === 'info') toastType = ToastType.Info
+    else if (toastTypeStr === 'success') toastType = ToastType.Success
+    else if (toastTypeStr === 'error') toastType = ToastType.Error
+    else throw new Error(`Internal error: unknown toast type '${toastTypeStr}'`)
     toaster.push(new Toast(newToastMsg, toastType, duration < 10000 ? duration : Infinity))
     newToastMsg = ''
   }}
@@ -24,7 +27,7 @@
       {#each [0, 2, 4, 6, 8, 10] as i}
         <div class="flex w-4 flex-col text-center">
           <span>|</span>
-          <span>{i}</span>
+          <span>{i !== 10 ? i : '∞'}</span>
         </div>
       {/each}
     </div>
@@ -37,15 +40,15 @@
     <input
       type="radio"
       value="info"
-      bind:group={toastType}
+      bind:group={toastTypeStr}
       name="toastType"
       class="radio"
       checked
     />
     Info
-    <input type="radio" value="success" bind:group={toastType} name="toastType" class="radio" />
+    <input type="radio" value="success" bind:group={toastTypeStr} name="toastType" class="radio" />
     Success
-    <input type="radio" value="error" bind:group={toastType} name="toastType" class="radio" /> Error
+    <input type="radio" value="error" bind:group={toastTypeStr} name="toastType" class="radio" /> Error
   </div>
 
   <button type="submit" class="btn btn-primary" disabled={!newToastMsg}>Add toast</button>

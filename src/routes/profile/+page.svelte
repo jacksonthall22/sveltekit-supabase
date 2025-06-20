@@ -1,7 +1,8 @@
 <script lang="ts">
   import DeleteAccountButton from '$lib/components/DeleteAccountButton.svelte'
   import { route } from '$lib/ROUTES.js'
-  import { Toast, toaster } from '$lib/runes/toaster.svelte.js'
+  import { Toast, toaster, ToastType } from '$lib/runes/toaster.svelte.js'
+  import { untrack } from 'svelte'
   import SuperDebug, { superForm } from 'sveltekit-superforms'
 
   let { data } = $props()
@@ -16,10 +17,17 @@
       resetForm: false,
     }),
   )
+  const anyErrors = $derived(Object.keys($errors).length > 0)
 
-  // svelte-ignore state_referenced_locally
-  message.subscribe((msg) => {
-    toaster.push(new Toast(msg, 'info', 10000))
+  $effect(() => {
+    // Show new toast popup when `message` changes
+    if ($message)
+      untrack(() => {
+        let toastType: ToastType
+        if (anyErrors) toastType = ToastType.Error
+        else toastType = ToastType.Info
+        toaster.push(new Toast($message, toastType, 5000))
+      })
   })
 </script>
 

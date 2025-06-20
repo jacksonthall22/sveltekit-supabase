@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Toast, toaster, ToastType } from '$lib/runes/toaster.svelte.js'
+  import { untrack } from 'svelte'
   import { superForm } from 'sveltekit-superforms'
 
   const { data } = $props()
@@ -10,11 +12,19 @@
       resetForm: false,
     }),
   )
-</script>
+  const anyErrors = $derived(Object.keys($errors).length > 0)
 
-{#if $message}
-  <h3>{$message}</h3>
-{/if}
+  $effect(() => {
+    // Show new toast popup when `message` changes
+    if ($message)
+      untrack(() => {
+        let toastType: ToastType
+        if (anyErrors) toastType = ToastType.Error
+        else toastType = ToastType.Info
+        toaster.push(new Toast($message, toastType, 5000))
+      })
+  })
+</script>
 
 <form method="POST" class="card-body" use:enhance>
   <fieldset class="fieldset w-xs py-4">

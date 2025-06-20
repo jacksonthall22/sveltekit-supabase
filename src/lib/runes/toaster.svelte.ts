@@ -1,5 +1,12 @@
 import { ReactiveQueue } from '$lib/utils/reactiveQueue.svelte'
 
+
+export enum ToastType {
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
+}
+
 export class Toast {
   static _nextId = 0
   public id: number
@@ -10,7 +17,7 @@ export class Toast {
 
   constructor(
     public message: string,
-    public type: 'success' | 'error' | 'info',
+    public type: ToastType,
     public durationMs: number,
   ) {
     this.id = Toast.nextId
@@ -29,7 +36,7 @@ class Toaster extends ReactiveQueue<Toast> {
     if (!toast.message) return
     this.enqueue(toast)
     // Automatically remove the message after its duration
-    if (toast.durationMs !== Infinity) setTimeout(() => this.remove(toast.id), toast.durationMs)
+    if (toast.durationMs < Infinity) setTimeout(() => this.remove(toast.id), toast.durationMs)
   }
 
   /** Remove a toast by its ID. Returns the removed toast, or null if the ID was not found. */

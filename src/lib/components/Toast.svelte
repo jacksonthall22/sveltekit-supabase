@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Toast } from '$lib/runes/toaster.svelte'
-  import { toaster } from '$lib/runes/toaster.svelte'
+  import { toaster, ToastType } from '$lib/runes/toaster.svelte'
   import Icon from '@iconify/svelte'
   import { onMount } from 'svelte'
   import { Tween } from 'svelte/motion'
@@ -10,11 +10,13 @@
   }
   let { toast }: Props = $props()
 
-  let alertType = $derived(
-    toast.type === 'info' ? 'alert-info'
-    : toast.type === 'success' ? 'alert-success'
-    : 'alert-error',
-  )
+  let alertType = $derived.by(() => {
+    if (toast.type === ToastType.Info) return 'alert-info'
+    if (toast.type === ToastType.Success) return 'alert-success'
+    if (toast.type === ToastType.Error) return 'alert-error'
+    console.warn(`Unknown toast type: ${toast.type}. Defaulting to 'alert-info'.`)
+    return 'alert-info'
+  })
 
   let currentTime = new Tween(toast.durationMs, {
     duration: toast.durationMs,
