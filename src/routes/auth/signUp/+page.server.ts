@@ -1,4 +1,3 @@
-import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 import { db } from '$lib/db'
 import { profileTable } from '$lib/db/schema'
@@ -15,7 +14,6 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
-  hCaptchaToken: z.string().optional(),
 })
 
 export type SignUpFormValidated = SuperValidated<z.infer<typeof schema>>
@@ -35,9 +33,6 @@ export const actions = {
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
-    // Verify hCaptcha before proceeding
-    if (PUBLIC_USE_HCAPTCHA && !form.data.hCaptchaToken)
-      return setError(form, 'hCaptchaToken', 'hCaptcha verification failed')
 
     const { error: authError, data } = await supabase.auth.signUp({
       email: form.data.email,

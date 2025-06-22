@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
-  import HCaptcha from '$lib/components/HCaptcha.svelte'
   import SuperDebug, { superForm } from 'sveltekit-superforms'
   import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
   import { route } from '$lib/ROUTES'
@@ -114,10 +112,6 @@
   </fieldset>
   {#if $errors._errors}
     <div class="text-error">{$errors._errors}</div>
-  {/if}
-
-  {#if PUBLIC_USE_HCAPTCHA}
-    <HCaptcha bind:token={$form.hCaptchaToken!} />
   {/if}
 
   <fieldset class="fieldset">

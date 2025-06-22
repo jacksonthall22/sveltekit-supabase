@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
-  import HCaptcha from '$lib/components/HCaptcha.svelte'
   import SuperDebug, { superForm } from 'sveltekit-superforms'
   import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
   import { route } from '$lib/ROUTES'
@@ -53,13 +51,6 @@
     </label>
     {#if $errors.password}
       <div class="text-error">{$errors.password}</div>
-    {/if}
-
-    {#if PUBLIC_USE_HCAPTCHA}
-      <HCaptcha bind:token={$form.hCaptchaToken!} />
-    {/if}
-    {#if $errors.hCaptchaToken}
-      <div class="text-error">{$errors.hCaptchaToken}</div>
     {/if}
 
     <div class="card-actions">

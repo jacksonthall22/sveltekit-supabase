@@ -5,14 +5,12 @@ import { z } from 'zod'
 import type { SuperValidated } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { message, setError, superValidate } from 'sveltekit-superforms'
-import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 import { route } from '$lib/ROUTES'
 
 const schema = z.object({
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
-  hCaptchaToken: z.string().optional(),
 })
 
 export type ResetPasswordFormValidated = SuperValidated<z.infer<typeof schema>>
@@ -31,10 +29,6 @@ export const actions = {
 
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
-
-    // Verify hCaptcha before proceeding
-    if (PUBLIC_USE_HCAPTCHA && !form.data.hCaptchaToken)
-      return setError(form, 'hCaptchaToken', 'hCaptcha verification failed')
 
     const { error } = await supabase.auth.updateUser({ password: form.data.password })
 

@@ -10,7 +10,6 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
   - Sign up/in/out
   - Change/recover password
   - Server-side redirects for protecting routes
-  - hCaptcha for sign in/up (WIP)
 - Drizzle + Postgres + Zod for storing additional account data
 - SvelteKit SuperForms + Zod for form parsing, validation, progressive enhancement, and reactive `submitting`/`delayed` state handling
 - Light/dark mode stored reactively in cookies with [`svelte-persisted-state`](https://github.com/oMaN-Rod/svelte-persisted-state)
