@@ -1,12 +1,14 @@
 import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 import { db } from '$lib/db'
 import { profileTable } from '$lib/db/schema'
+import { route } from '$lib/ROUTES'
 import { fail, redirect } from '@sveltejs/kit'
 import type { SuperValidated } from 'sveltekit-superforms'
 import { setError, superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { z } from 'zod'
 import type { Actions, PageServerLoad } from './$types'
+import { eq } from 'drizzle-orm'
 
 const schema = z.object({
   firstName: z.string(),
@@ -24,36 +26,38 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions = {
-  default: async ({ request, locals: { supabase } }) => {
+  default: async ({ request, locals: { supabase, user } }) => {
     const form = await superValidate(request, zod(schema))
 
+    // Check if form is valid
     if (!form.valid) return fail(400, { form })
 
     // Check if passwords match
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
+    // Non-anonymous logged-in user should have been redirected to `/profile` from `+hooks.server.ts`
+    if (!user.is_anonymous) return fail(500, { form, error: 'User is already logged in' })
 
-    const { error: authError, data } = await supabase.auth.signUp({
+    const existingRow = await db.query.profileTable.findFirst({
+      where: eq(profileTable.id, user.id),
+    })
+    if (existingRow) return fail(500, { form, error: 'User profile already exists' })
+
+    const { error: authError, data } = await supabase.auth.updateUser({
       email: form.data.email,
       password: form.data.password,
-      options: PUBLIC_USE_HCAPTCHA ? { captchaToken: form.data.hCaptchaToken! } : undefined,
     })
-    if (authError) {
-      if (authError.code === 'user_already_exists')
-        return setError(form, 'email', 'Email already in use')
-      return fail(500, { authError, form })
-    }
+    if (authError) return fail(500, { authError, form })
 
-    // If there was no error above, then the `profile` table should have a new row with `id` as
-    // the same Supabase Auth `id` of the newly created user. Update that row with the user's first/last name.
+    // Create profile record
     const row = await db
       .insert(profileTable)
       .values({ id: data.user!.id, firstName: form.data.firstName, lastName: form.data.lastName })
       .returning()
-    if (!row || row.length === 0)
-      fail(500, { form, error: 'Failed to create user profile in database' })
+    if (!row.length)
+      return fail(500, { form, error: 'Failed to create user profile in database' })
 
-    return redirect(303, '/')
+    return redirect(303, route('/'))
   },
 } satisfies Actions

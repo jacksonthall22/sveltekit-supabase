@@ -32,13 +32,25 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
    * safe, and on the server, it reads `session` from the `LayoutData`, which
    * safely checked the session using `safeGetSession`.
    */
-  const {
+  let {
     data: { session },
+    error: getSessionError,
   } = await supabase.auth.getSession()
-
-  const {
+  let {
     data: { user },
+    error: getUserError,
   } = await supabase.auth.getUser()
 
-  return { session, supabase, user }
+  // Check if user has logged out or JWT validation has failed
+  if (!session || !user || getSessionError || getUserError) {
+    // Here user is considered signed out. Return an anonymous session.
+    // See: https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=js
+    await supabase.auth.signInAnonymously()
+    session = (await supabase.auth.getSession()).data.session!
+    user = (await supabase.auth.getUser()).data.user!
+    if (!session.user.is_anonymous || !user.is_anonymous)
+      throw new Error('Failed to create anonymous user and session')
+  }
+
+  return { supabase, session, user }
 }

@@ -1,6 +1,7 @@
 import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { DaisyUITheme } from '$lib/constants'
+import { route } from '$lib/ROUTES'
 import {
   setTheme,
   SITE_SETTINGS_STORAGE_KEY,
@@ -67,19 +68,24 @@ const supabase: Handle = async ({ event, resolve }) => {
    * JWT before returning the session.
    */
   event.locals.safeGetSession = async () => {
-    const {
+    let {
       data: { session },
+      error: getSessionError,
     } = await event.locals.supabase.auth.getSession()
-
-    if (!session) return { session: null, user: null }
-
-    const {
+    let {
       data: { user },
-      error,
+      error: getUserError,  // This error will be populated if the JWT is invalid
     } = await event.locals.supabase.auth.getUser()
 
-    // Check if JWT validation has failed
-    if (error) return { session: null, user: null }
+    // Check if user has logged out or JWT validation has failed
+    if (!session || !user || getSessionError || getUserError) {
+      // Here user is considered signed out. Return an anonymous session.
+      // See: https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=js
+      await event.locals.supabase.auth.signInAnonymously()
+      session = (await event.locals.supabase.auth.getSession()).data.session!
+      user = (await event.locals.supabase.auth.getUser()).data.user!
+      if (!session.user.is_anonymous || !user.is_anonymous) throw new Error('Failed to create anonymous user and session')
+    }
 
     return { session, user }
   }
@@ -100,9 +106,15 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  if (!event.locals.session && event.url.pathname.startsWith('/private')) redirect(303, '/auth')
-  if (event.locals.session && event.url.pathname.startsWith('/auth/signIn'))
-    redirect(303, '/private')
+  const isLoggedIn = !!session && !user.is_anonymous
+  const pathname = event.url.pathname
+
+  // Redirect away from private routes while logged out
+  if (!isLoggedIn && pathname === route('/private')) redirect(303, route('/auth/signIn'))
+
+  // Redirect to profile if trying to sign in/up while logged in
+  if (isLoggedIn && [route('/auth/signIn'), route('/auth/signUp')].includes(pathname))
+    redirect(303, route('/profile'))
 
   return resolve(event)
 }

@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   // User session is the data stored in Supabase - this includes things like the unique user ID, email,
   // and other user data that doesn't change frequently (ex. stuff tied to auth).
   const { user } = await locals.safeGetSession()
-  if (!user) redirect(303, route('/auth/signIn'))
+  if (!user || user.is_anonymous) redirect(303, route('/auth/signIn'))
 
   // Supabase recommends using your own database to store "additional" user data that may change more frequently
   // and have its primary key be the user ID from Supabase.
