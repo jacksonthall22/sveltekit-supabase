@@ -77,6 +77,7 @@ const supabase: Handle = async ({ event, resolve }) => {
       error: getUserError,  // This error will be populated if the JWT is invalid
     } = await event.locals.supabase.auth.getUser()
 
+    // TODO: Remove? Do we only need to do this on the client?
     // Check if user has logged out or JWT validation has failed
     if (!session || !user || getSessionError || getUserError) {
       // Here user is considered signed out. Return an anonymous session.
