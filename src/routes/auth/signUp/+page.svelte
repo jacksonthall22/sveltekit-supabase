@@ -58,7 +58,7 @@
         {...$constraints.confirmPassword}
       />
     </label>
-    {#if $errors.password}
+    {#if $errors.confirmPassword}
       <div class="text-error">{$errors.confirmPassword}</div>
     {/if}
 
