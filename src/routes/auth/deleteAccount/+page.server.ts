@@ -10,7 +10,7 @@ export const actions = {
     if (!user) return fail(401, { error: 'Unauthorized' })
 
     // Delete the user data from the `profile` table. We do this as a transaction in case we
-    // find ourself in any unexpected state (read below).
+    // find ourselves in any unexpected state (read below).
     await db.transaction(async (tx) => {
       const deletedRows = await db
         .delete(profileTable)
