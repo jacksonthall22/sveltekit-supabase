@@ -57,7 +57,7 @@ export const actions = {
         password: form.data.password,
       })
       data = result.data
-      if (result.error) return fail(500, { error: result.error, form })
+      if (result.error) return fail(500, { error: 'Failed to update anonymous user', form })
     } else {
       // No current user - create a new one
       const result = await supabase.auth.signUp({
@@ -65,7 +65,7 @@ export const actions = {
         password: form.data.password,
       })
       data = result.data
-      if (result.error) return fail(500, { error: result.error, form })
+      if (result.error) return fail(500, { error: 'Failed to create new user', form })
     }
 
     // Create a row in custom `profileTable` with other account info
