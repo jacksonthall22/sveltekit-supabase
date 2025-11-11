@@ -74,7 +74,7 @@ const supabase: Handle = async ({ event, resolve }) => {
     } = await event.locals.supabase.auth.getSession()
     let {
       data: { user },
-      error: getUserError,  // This error will be populated if the JWT is invalid
+      error: getUserError, // This error will be populated if the JWT is invalid
     } = await event.locals.supabase.auth.getUser()
 
     // TODO: Remove? Do we only need to do this on the client?
@@ -85,7 +85,8 @@ const supabase: Handle = async ({ event, resolve }) => {
       await event.locals.supabase.auth.signInAnonymously()
       session = (await event.locals.supabase.auth.getSession()).data.session!
       user = (await event.locals.supabase.auth.getUser()).data.user!
-      if (!session.user.is_anonymous || !user.is_anonymous) throw new Error('Failed to create anonymous user and session')
+      if (!session.user.is_anonymous || !user.is_anonymous)
+        throw new Error('Failed to create anonymous user and session')
     }
 
     return { session, user }
