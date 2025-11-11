@@ -1,5 +1,5 @@
-import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { PRIVATE_SUPABASE_SECRET_KEY } from '$env/static/private'
+import { PUBLIC_SUPABASE_PUBLISHABLE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { DaisyUITheme } from '$lib/constants'
 import { route } from '$lib/ROUTES'
 import {
@@ -17,7 +17,7 @@ const supabase: Handle = async ({ event, resolve }) => {
    *
    * The Supabase client gets the Auth token from the request cookies.
    */
-  event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+  event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
     cookies: {
       getAll: () => event.cookies.getAll(),
       /**
@@ -44,7 +44,7 @@ const supabase: Handle = async ({ event, resolve }) => {
    */
   event.locals.supabaseAdmin = createServerClient(
     PUBLIC_SUPABASE_URL,
-    PRIVATE_SUPABASE_SERVICE_ROLE_KEY,
+    PRIVATE_SUPABASE_SECRET_KEY,
     {
       cookies: {
         getAll: () => event.cookies.getAll(),
