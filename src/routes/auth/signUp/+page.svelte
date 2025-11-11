@@ -2,11 +2,20 @@
   import SuperDebug, { superForm } from 'sveltekit-superforms'
   import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
   import { route } from '$lib/ROUTES'
+  import HCaptcha from '$lib/components/HCaptcha.svelte'
 
   let { data } = $props()
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
     superForm(data.form),
   )
+  let hcaptcha: HCaptcha
+
+  $effect(() => {
+    if ($errors) {
+      console.log('test: $errors:', $errors)
+      hcaptcha.reset()
+    }
+  })
 </script>
 
 {#if $message}
@@ -98,6 +107,12 @@
     {/if}
     {#if $errors.firstName}
       <div class="text-error">{$errors.firstName}</div>
+    {/if}
+
+    <HCaptcha bind:this={hcaptcha} bind:token={$form.hcaptchaToken} />
+    <input type="hidden" name="hcaptchaToken" bind:value={$form.hcaptchaToken} />
+    {#if $errors.hcaptchaToken}
+      <div class="text-error">{$errors.hcaptchaToken}</div>
     {/if}
 
     <div class="card-actions">

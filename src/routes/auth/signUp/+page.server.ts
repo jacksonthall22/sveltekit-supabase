@@ -16,6 +16,7 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
+  hcaptchaToken: z.string(),
 })
 
 export type SignUpFormValidated = SuperValidated<z.infer<typeof schema>>
@@ -35,6 +36,10 @@ export const actions = {
     // Check if passwords match
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
+
+    // Check that hCaptcha was completed
+    if (!form.data.hcaptchaToken)
+      return setError(form, 'hcaptchaToken', 'Please complete hCaptcha challenge')
 
     // User should only already exist if it was an anonymous sign-in (which are a TODO).
     // If user is anonymous, update existing row in Supabase-managed auth table with the new
@@ -63,9 +68,20 @@ export const actions = {
       const result = await supabase.auth.signUp({
         email: form.data.email,
         password: form.data.password,
+        options: {
+          captchaToken: form.data.hcaptchaToken,
+        },
       })
       data = result.data
-      if (result.error) return fail(500, { error: 'Failed to create new user', form })
+      if (result.error) {
+        if (result.error.code == 'captcha_failed')
+          return setError(form, 'hcaptchaToken', 'Captcha verification failed', { status: 422 })
+
+        if (result.error.code == 'user_already_exists')
+          return setError(form, 'email', 'User already exists', { status: 409 })
+
+        return fail(500, { error: 'Failed to create new user', form })
+      }
     }
 
     // Create a row in custom `profileTable` with other account info
