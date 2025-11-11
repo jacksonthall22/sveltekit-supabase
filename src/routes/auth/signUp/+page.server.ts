@@ -36,7 +36,7 @@ export const actions = {
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
-    // User should only already exist if it was an anonymous sign-in (TODO).
+    // User should only already exist if it was an anonymous sign-in (which are a TODO).
     // If user is anonymous, update existing row in Supabase-managed auth table with the new
     // email/password. Otherwise must create new user.
     let data
