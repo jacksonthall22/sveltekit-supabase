@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^8.31.1",
     "autoprefixer": "^10.4.21",
     "clsx": "^2.1.1",
-    "drizzle-kit": "^0.31.0",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.25.1",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-svelte": "^3.5.1",
@@ -63,5 +63,10 @@
     "svelte-captcha-enhance": "^1.2.1",
     "svelte-persisted-state": "^1.2.0",
     "utf-8-validate": "^6.0.5"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "drizzle-kit@0.31.4": "patches/drizzle-kit@0.31.4.patch"
+    }
   }
 }

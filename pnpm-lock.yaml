@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  drizzle-kit@0.31.4:
+    hash: dad9145b3c46b3be412da3af334afc5542ce2bd475246afb98a110bcac485df2
+    path: patches/drizzle-kit@0.31.4.patch
+
 importers:
 
   .:
@@ -82,8 +87,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       drizzle-kit:
-        specifier: ^0.31.0
-        version: 0.31.1
+        specifier: ^0.31.4
+        version: 0.31.4(patch_hash=dad9145b3c46b3be412da3af334afc5542ce2bd475246afb98a110bcac485df2)
       eslint:
         specifier: ^9.25.1
         version: 9.29.0(jiti@2.4.2)
@@ -1357,8 +1362,8 @@ packages:
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
 
-  drizzle-kit@0.31.1:
-    resolution: {integrity: sha512-PUjYKWtzOzPtdtQlTHQG3qfv4Y0XT8+Eas6UbxCmxTj7qgMf+39dDujf1BP1I+qqZtw9uzwTh8jYtkMuCq+B0Q==}
+  drizzle-kit@0.31.4:
+    resolution: {integrity: sha512-tCPWVZWZqWVx2XUsVpJRnH9Mx0ClVOf5YUHerZ5so1OKSlqww4zy1R5ksEdGRcO3tM3zj0PYN6V48TbQCL1RfA==}
     hasBin: true
 
   drizzle-orm@0.43.1:
@@ -3617,7 +3622,7 @@ snapshots:
   dlv@1.1.3:
     optional: true
 
-  drizzle-kit@0.31.1:
+  drizzle-kit@0.31.4(patch_hash=dad9145b3c46b3be412da3af334afc5542ce2bd475246afb98a110bcac485df2):
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5

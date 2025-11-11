@@ -1,0 +1,843 @@
+diff --git a/bin.cjs b/bin.cjs
+index 27f1406f7e68279ade9e4c95ad023ac44ab6a714..0cf10aacc8d646fb3087f4aa56de23308d58d86c 100755
+--- a/bin.cjs
++++ b/bin.cjs
+@@ -6478,18 +6478,37 @@ var init_pgSchema = __esm({
+           on: splitted[6] !== "undefined" ? splitted[6] : void 0
+         };
+       },
+-      squashPolicyPush: (policy5) => {
+-        var _a2;
+-        return `${policy5.name}--${policy5.as}--${policy5.for}--${(_a2 = policy5.to) == null ? void 0 : _a2.join(",")}--${policy5.on}`;
++      squashPolicyPush: (policy4) => {
++        const toList = policy4.to?.join(",") ?? "";
++        return [
++          policy4.name,
++          policy4.as,
++          policy4.for,
++          toList,
++          policy4.using ?? "undefined",
++          policy4.withCheck ?? "undefined",
++          policy4.on ?? "undefined",
++        ].join("--");
+       },
+-      unsquashPolicyPush: (policy5) => {
+-        const splitted = policy5.split("--");
++      unsquashPolicyPush: (policyString) => {
++        const [
++          name,
++          as,
++          forOp,
++          toList,
++          using,
++          withCheck,
++          on,
++        ] = policyString.split("--");
++
+         return {
+-          name: splitted[0],
+-          as: splitted[1],
+-          for: splitted[2],
+-          to: splitted[3].split(","),
+-          on: splitted[4] !== "undefined" ? splitted[4] : void 0
++          name,
++          as,
++          for: forOp,
++          to: toList ? toList.split(",") : [],
++          using: using !== "undefined" ? using : undefined,
++          withCheck: withCheck !== "undefined" ? withCheck : undefined,
++          on: on !== "undefined" ? on : undefined,
+         };
+       },
+       squashPK: (pk) => {
+@@ -6824,7 +6843,7 @@ var init_singlestoreSchema = __esm({
+       			sqlSecurity: sqlSecurity,
+       			withCheckOption: withCheckOption !== 'undefined' ? withCheckOption : undefined,
+       		};
+-
++
+       		return viewMeta.parse(toReturn);
+       	}, */
+     };
+@@ -17755,7 +17774,7 @@ var init_mysqlSerializer = __esm({
+                 `
+ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+           The unique constraint ${source_default.underline.blue(
+                   column11.uniqueName
+                 )} on the ${source_default.underline.blue(
+@@ -17825,7 +17844,7 @@ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${so
+ ${withStyle.errorWarning(
+                 `We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+ The unique constraint ${source_default.underline.blue(
+                   name
+                 )} on the ${source_default.underline.blue(
+@@ -17912,7 +17931,7 @@ The unique constraint ${source_default.underline.blue(
+ ${withStyle.errorWarning(
+                   `We've found duplicated unique constraint names in ${source_default.underline.blue(
+                     tableName
+-                  )} table.
++                  )} table.
+ The unique index ${source_default.underline.blue(
+                     name
+                   )} on the ${source_default.underline.blue(
+@@ -18241,7 +18260,7 @@ ${withStyle.errorWarning(
+       }
+       try {
+         const fks = await db.query(
+-          `SELECT
++          `SELECT
+       kcu.TABLE_SCHEMA,
+       kcu.TABLE_NAME,
+       kcu.CONSTRAINT_NAME,
+@@ -18251,12 +18270,12 @@ ${withStyle.errorWarning(
+       kcu.REFERENCED_COLUMN_NAME,
+       rc.UPDATE_RULE,
+       rc.DELETE_RULE
+-  FROM
++  FROM
+       INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+-  LEFT JOIN
+-      information_schema.referential_constraints rc
++  LEFT JOIN
++      information_schema.referential_constraints rc
+       ON kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+-  WHERE kcu.TABLE_SCHEMA = '${inputSchema}' AND kcu.CONSTRAINT_NAME != 'PRIMARY'
++  WHERE kcu.TABLE_SCHEMA = '${inputSchema}' AND kcu.CONSTRAINT_NAME != 'PRIMARY'
+       AND kcu.REFERENCED_TABLE_NAME IS NOT NULL;`
+         );
+         const fkRows = fks;
+@@ -18375,18 +18394,18 @@ ${withStyle.errorWarning(
+         progressCallback("views", viewsCount, "done");
+       }
+       const checkConstraints = await db.query(
+-        `SELECT
+-    tc.table_name,
+-    tc.constraint_name,
++        `SELECT
++    tc.table_name,
++    tc.constraint_name,
+     cc.check_clause
+-FROM
++FROM
+     information_schema.table_constraints tc
+-JOIN
+-    information_schema.check_constraints cc
++JOIN
++    information_schema.check_constraints cc
+     ON tc.constraint_name = cc.constraint_name
+-WHERE
++WHERE
+     tc.constraint_schema = '${inputSchema}'
+-AND
++AND
+     tc.constraint_type = 'CHECK';`
+       );
+       checksCount += checkConstraints.length;
+@@ -18694,7 +18713,7 @@ var init_pgSerializer = __esm({
+                 `
+ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+           The unique constraint ${source_default.underline.blue(
+                   column11.uniqueName
+                 )} on the ${source_default.underline.blue(
+@@ -18761,7 +18780,7 @@ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${so
+             console.log(
+               `
+ ${withStyle.errorWarning(
+-                `We've found duplicated unique constraint names in ${source_default.underline.blue(tableName)} table.
++                `We've found duplicated unique constraint names in ${source_default.underline.blue(tableName)} table.
+         The unique constraint ${source_default.underline.blue(name)} on the ${source_default.underline.blue(
+                   columnNames.join(",")
+                 )} columns is confilcting with a unique constraint name already defined for ${source_default.underline.blue(existingUnique.columns.join(","))} columns
+@@ -18920,24 +18939,25 @@ ${withStyle.errorWarning(
+               });
+             }
+           }
+-          if (policiesObject[policy5.name] !== void 0) {
+-            console.log(
+-              `
+-${withStyle.errorWarning(
+-                `We've found duplicated policy name across ${source_default.underline.blue(tableKey2)} table. Please rename one of the policies with ${source_default.underline.blue(
+-                  policy5.name
+-                )} name`
+-              )}`
+-            );
+-            process.exit(1);
++          const policyFor = ((_b2 = policy5.for) == null ? void 0 : _b2.toUpperCase()) ?? "ALL";
++          let usingClause, withCheckClause;
++          if (policyFor === "SELECT" || policyFor === "DELETE") {
++            usingClause = (0, import_drizzle_orm4.is)(policy5.using, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.using).sql : void 0;
++            withCheckClause = undefined;
++          } else if (policyFor === "INSERT") {
++            usingClause = undefined;
++            withCheckClause = (0, import_drizzle_orm4.is)(policy5.withCheck, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.withCheck).sql : void 0;
++          } else if (policyFor === "UPDATE" || policyFor === "ALL") {
++            usingClause = (0, import_drizzle_orm4.is)(policy5.using, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.using).sql : void 0;
++            withCheckClause = (0, import_drizzle_orm4.is)(policy5.withCheck, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.withCheck).sql : void 0;
+           }
+           policiesObject[policy5.name] = {
+             name: policy5.name,
+             as: ((_a3 = policy5.as) == null ? void 0 : _a3.toUpperCase()) ?? "PERMISSIVE",
+-            for: ((_b2 = policy5.for) == null ? void 0 : _b2.toUpperCase()) ?? "ALL",
++            for: policyFor,
+             to: mappedTo.sort(),
+-            using: (0, import_drizzle_orm4.is)(policy5.using, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.using).sql : void 0,
+-            withCheck: (0, import_drizzle_orm4.is)(policy5.withCheck, import_drizzle_orm4.SQL) ? dialect6.sqlToQuery(policy5.withCheck).sql : void 0
++            ...(usingClause !== undefined ? { using: usingClause } : {}),
++            ...(withCheckClause !== undefined ? { withCheck: withCheckClause } : {})
+           };
+         });
+         checks.forEach((check2) => {
+@@ -19145,7 +19165,7 @@ ${withStyle.errorWarning(
+                 console.log(
+                   `
+ ${withStyle.errorWarning(
+-                    `We've found duplicated unique constraint names in ${source_default.underline.blue(viewName)} table.
++                    `We've found duplicated unique constraint names in ${source_default.underline.blue(viewName)} table.
+           The unique constraint ${source_default.underline.blue(column11.uniqueName)} on the ${source_default.underline.blue(
+                       column11.name
+                     )} column is confilcting with a unique constraint name already defined for ${source_default.underline.blue(existingUnique.columns.join(","))} columns
+@@ -19251,21 +19271,21 @@ ${withStyle.errorWarning(
+       const internals = { tables: {} };
+       const where = schemaFilters.map((t4) => `n.nspname = '${t4}'`).join(" or ");
+       const allTables = await db.query(
+-        `SELECT
+-    n.nspname AS table_schema,
+-    c.relname AS table_name,
+-    CASE
++        `SELECT
++    n.nspname AS table_schema,
++    c.relname AS table_name,
++    CASE
+         WHEN c.relkind = 'r' THEN 'table'
+         WHEN c.relkind = 'v' THEN 'view'
+         WHEN c.relkind = 'm' THEN 'materialized_view'
+     END AS type,
+ 	c.relrowsecurity AS rls_enabled
+-FROM
++FROM
+     pg_catalog.pg_class c
+-JOIN
++JOIN
+     pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+-WHERE
+-	c.relkind IN ('r', 'v', 'm')
++WHERE
++	c.relkind IN ('r', 'v', 'm')
+     ${where === "" ? "" : ` AND ${where}`};`
+       );
+       const schemas = new Set(allTables.map((it) => it.table_schema));
+@@ -19433,25 +19453,25 @@ WHERE
+         AND tc.table_name = c.table_name AND ccu.column_name = c.column_name
+       WHERE tc.table_name = '${tableName}' and constraint_schema = '${tableSchema}';`
+             );
+-            const tableChecks = await db.query(`SELECT
++            const tableChecks = await db.query(`SELECT
+ 						tc.constraint_name,
+ 						tc.constraint_type,
+ 						pg_get_constraintdef(con.oid) AS constraint_definition
+-					FROM
++					FROM
+ 						information_schema.table_constraints AS tc
+-						JOIN pg_constraint AS con
++						JOIN pg_constraint AS con
+ 							ON tc.constraint_name = con.conname
+ 							AND con.conrelid = (
+-								SELECT oid
+-								FROM pg_class
+-								WHERE relname = tc.table_name
++								SELECT oid
++								FROM pg_class
++								WHERE relname = tc.table_name
+ 								AND relnamespace = (
+-									SELECT oid
+-									FROM pg_namespace
++									SELECT oid
++									FROM pg_namespace
+ 									WHERE nspname = tc.constraint_schema
+ 								)
+ 							)
+-					WHERE
++					WHERE
+ 						tc.table_name = '${tableName}'
+ 						AND tc.constraint_schema = '${tableSchema}'
+ 						AND tc.constraint_type = 'CHECK';`);
+@@ -19583,8 +19603,8 @@ WHERE
+                 const tableCompositePkName = await db.query(
+                   `SELECT conname AS primary_key
+             FROM   pg_constraint join pg_class on (pg_class.oid = conrelid)
+-            WHERE  contype = 'p'
+-            AND    connamespace = $1::regnamespace
++            WHERE  contype = 'p'
++            AND    connamespace = $1::regnamespace
+             AND    pg_class.relname = $2;`,
+                   [tableSchema, tableName]
+                 );
+@@ -19925,7 +19945,7 @@ FROM
+ JOIN
+     pg_namespace n ON c.relnamespace = n.oid
+ LEFT JOIN
+-    pg_tablespace ts ON c.reltablespace = ts.oid
++    pg_tablespace ts ON c.reltablespace = ts.oid
+ WHERE
+     (c.relkind = 'm' OR c.relkind = 'v')
+     AND n.nspname = '${viewSchema}'
+@@ -20065,25 +20085,25 @@ WHERE
+     };
+     getColumnsInfoQuery = ({ schema: schema6, table: table6, db }) => {
+       return db.query(
+-        `SELECT
++        `SELECT
+     a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name
+     a.attname AS column_name,   -- Column name
+-    CASE
+-        WHEN NOT a.attisdropped THEN
+-            CASE
++    CASE
++        WHEN NOT a.attisdropped THEN
++            CASE
+                 WHEN a.attnotnull THEN 'NO'
+                 ELSE 'YES'
+-            END
+-        ELSE NULL
++            END
++        ELSE NULL
+     END AS is_nullable,  -- NULL or NOT NULL constraint
+     a.attndims AS array_dimensions,  -- Array dimensions
+-    CASE
+-        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[])
++    CASE
++        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[])
+         AND EXISTS (
+             SELECT FROM pg_attrdef ad
+-            WHERE ad.adrelid = a.attrelid
+-            AND ad.adnum = a.attnum
+-            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval('''
++            WHERE ad.adrelid = a.attrelid
++            AND ad.adnum = a.attnum
++            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval('''
+                 || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'
+         )
+         THEN CASE a.atttypid
+@@ -20108,27 +20128,27 @@ WHERE
+     c.identity_minimum,  -- Minimum value for identity column
+     c.identity_cycle,  -- Does the identity column cycle?
+     enum_ns.nspname AS type_schema  -- Schema of the enum type
+-FROM
++FROM
+     pg_attribute a
+-JOIN
++JOIN
+     pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info
+-JOIN
++JOIN
+     pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info
+-LEFT JOIN
+-    information_schema.columns c ON c.column_name = a.attname
+-        AND c.table_schema = ns.nspname
++LEFT JOIN
++    information_schema.columns c ON c.column_name = a.attname
++        AND c.table_schema = ns.nspname
+         AND c.table_name = cls.relname  -- Match schema and table/view name
+-LEFT JOIN
++LEFT JOIN
+     pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info
+-LEFT JOIN
++LEFT JOIN
+     pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema
+-WHERE
++WHERE
+     a.attnum > 0  -- Valid column numbers only
+     AND NOT a.attisdropped  -- Skip dropped columns
+     AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')
+     AND ns.nspname = '${schema6}'  -- Filter by schema
+     AND cls.relname = '${table6}'  -- Filter by table name
+-ORDER BY
++ORDER BY
+     a.attnum;  -- Order by column number`
+       );
+     };
+@@ -20316,7 +20336,7 @@ var init_sqliteSerializer = __esm({
+                 `
+ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+           The unique constraint ${source_default.underline.blue(
+                   column11.uniqueName
+                 )} on the ${source_default.underline.blue(
+@@ -20420,7 +20440,7 @@ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${so
+ ${withStyle.errorWarning(
+                 `We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+ The unique constraint ${source_default.underline.blue(
+                   name
+                 )} on the ${source_default.underline.blue(
+@@ -20557,7 +20577,7 @@ ${withStyle.errorWarning(
+     fromDatabase3 = async (db, tablesFilter = (table6) => true, progressCallback) => {
+       const result = {};
+       const resultViews = {};
+-      const columns = await db.query(`SELECT
++      const columns = await db.query(`SELECT
+ 		  m.name as "tableName",
+ 		  p.name as "columnName",
+ 		  p.type as "columnType",
+@@ -20569,7 +20589,7 @@ ${withStyle.errorWarning(
+ 		  m.type as type
+ 		FROM sqlite_master AS m
+ 		JOIN pragma_table_xinfo(m.name) AS p
+-		WHERE (m.type = 'table' OR m.type = 'view')
++		WHERE (m.type = 'table' OR m.type = 'view')
+ 		  AND ${filterIgnoredTablesByField("m.tbl_name")};`);
+       const tablesWithSeq = [];
+       const seq = await db.query(`SELECT
+@@ -20728,18 +20748,18 @@ ${withStyle.errorWarning(
+       if (progressCallback) {
+         progressCallback("fks", foreignKeysCount, "done");
+       }
+-      const idxs = await db.query(`SELECT
++      const idxs = await db.query(`SELECT
+     	  m.tbl_name as tableName,
+     	  il.name as indexName,
+     	  ii.name as columnName,
+     	  il.[unique] as isUnique,
+     	  il.seq as seq
+-		FROM
++		FROM
+ 		  sqlite_master AS m,
+     	  pragma_index_list(m.name) AS il,
+     	  pragma_index_info(il.name) AS ii
+-		WHERE
+-		  m.type = 'table'
++		WHERE
++		  m.type = 'table'
+     	  AND il.name NOT LIKE 'sqlite\\_autoindex\\_%' ESCAPE '\\'
+     	  AND ${filterIgnoredTablesByField("m.tbl_name")};`);
+       for (const idxRow of idxs) {
+@@ -20803,7 +20823,7 @@ ${withStyle.errorWarning(
+       const checks = await db.query(`SELECT
+ 		  name as "tableName",
+ 		  sql as "sql"
+-		FROM sqlite_master
++		FROM sqlite_master
+ 		WHERE type = 'table'
+ 		  AND ${filterIgnoredTablesByField("tbl_name")};`);
+       for (const check2 of checks) {
+@@ -20994,7 +21014,7 @@ var init_singlestoreSerializer = __esm({
+                 `
+ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+           The unique constraint ${source_default.underline.blue(
+                   column11.uniqueName
+                 )} on the ${source_default.underline.blue(
+@@ -21054,7 +21074,7 @@ ${withStyle.errorWarning(`We've found duplicated unique constraint names in ${so
+ ${withStyle.errorWarning(
+                 `We've found duplicated unique constraint names in ${source_default.underline.blue(
+                   tableName
+-                )} table.
++                )} table.
+ The unique constraint ${source_default.underline.blue(
+                   name
+                 )} on the ${source_default.underline.blue(
+@@ -21108,7 +21128,7 @@ The unique constraint ${source_default.underline.blue(
+ ${withStyle.errorWarning(
+                   `We've found duplicated unique constraint names in ${source_default.underline.blue(
+                     tableName
+-                  )} table.
++                  )} table.
+ The unique index ${source_default.underline.blue(
+                     name
+                   )} on the ${source_default.underline.blue(
+@@ -21903,7 +21923,7 @@ var require_difflib = __commonJS({
+             recursively to the pieces of the sequences to the left and to the right
+             of the matching subsequence.  This does not yield minimal edit
+             sequences, but does tend to yield matches that "look right" to people.
+-
++
+             SequenceMatcher tries to compute a "human-friendly diff" between two
+             sequences.  Unlike e.g. UNIX(tm) diff, the fundamental notion is the
+             longest *contiguous* & junk-free matching subsequence.  That's what
+@@ -21915,84 +21935,84 @@ var require_difflib = __commonJS({
+             ordinary text files, or maybe "<P>" lines in HTML files).  That may be
+             because this is the only method of the 3 that has a *concept* of
+             "junk" <wink>.
+-
++
+             Example, comparing two strings, and considering blanks to be "junk":
+-
++
+             >>> isjunk = (c) -> c is ' '
+             >>> s = new SequenceMatcher(isjunk,
+                                         'private Thread currentThread;',
+                                         'private volatile Thread currentThread;')
+-
++
+             .ratio() returns a float in [0, 1], measuring the "similarity" of the
+             sequences.  As a rule of thumb, a .ratio() value over 0.6 means the
+             sequences are close matches:
+-
++
+             >>> s.ratio().toPrecision(3)
+             '0.866'
+-
++
+             If you're only interested in where the sequences match,
+             .getMatchingBlocks() is handy:
+-
++
+             >>> for [a, b, size] in s.getMatchingBlocks()
+             ...   console.log("a[#{a}] and b[#{b}] match for #{size} elements");
+             a[0] and b[0] match for 8 elements
+             a[8] and b[17] match for 21 elements
+             a[29] and b[38] match for 0 elements
+-
++
+             Note that the last tuple returned by .get_matching_blocks() is always a
+             dummy, (len(a), len(b), 0), and this is the only case in which the last
+             tuple element (number of elements matched) is 0.
+-
++
+             If you want to know how to change the first sequence into the second,
+             use .get_opcodes():
+-
++
+             >>> for [op, a1, a2, b1, b2] in s.getOpcodes()
+             ...   console.log "#{op} a[#{a1}:#{a2}] b[#{b1}:#{b2}]"
+             equal a[0:8] b[0:8]
+             insert a[8:8] b[8:17]
+             equal a[8:29] b[17:38]
+-
++
+             See the Differ class for a fancy human-friendly file differencer, which
+             uses SequenceMatcher both to compare sequences of lines, and to compare
+             sequences of characters within similar (near-matching) lines.
+-
++
+             See also function getCloseMatches() in this module, which shows how
+             simple code building on SequenceMatcher can be used to do useful work.
+-
++
+             Timing:  Basic R-O is cubic time worst case and quadratic time expected
+             case.  SequenceMatcher is quadratic time for the worst case and has
+             expected-case behavior dependent in a complicated way on how many
+             elements the sequences have in common; best case time is linear.
+-
++
+             Methods:
+-
++
+             constructor(isjunk=null, a='', b='')
+                 Construct a SequenceMatcher.
+-
++
+             setSeqs(a, b)
+                 Set the two sequences to be compared.
+-
++
+             setSeq1(a)
+                 Set the first sequence to be compared.
+-
++
+             setSeq2(b)
+                 Set the second sequence to be compared.
+-
++
+             findLongestMatch(alo, ahi, blo, bhi)
+                 Find longest matching block in a[alo:ahi] and b[blo:bhi].
+-
++
+             getMatchingBlocks()
+                 Return list of triples describing matching subsequences.
+-
++
+             getOpcodes()
+                 Return list of 5-tuples describing how to turn a into b.
+-
++
+             ratio()
+                 Return a measure of the sequences' similarity (float in [0,1]).
+-
++
+             quickRatio()
+                 Return an upper bound on .ratio() relatively quickly.
+-
++
+             realQuickRatio()
+                 Return an upper bound on ratio() very quickly.
+             */
+@@ -22303,26 +22323,26 @@ var require_difflib = __commonJS({
+             producing human-readable differences or deltas.  Differ uses
+             SequenceMatcher both to compare sequences of lines, and to compare
+             sequences of characters within similar (near-matching) lines.
+-
++
+             Each line of a Differ delta begins with a two-letter code:
+-
++
+                 '- '    line unique to sequence 1
+                 '+ '    line unique to sequence 2
+                 '  '    line common to both sequences
+                 '? '    line not present in either input sequence
+-
++
+             Lines beginning with '? ' attempt to guide the eye to intraline
+             differences, and were not present in either input sequence.  These lines
+             can be confusing if the sequences contain tab characters.
+-
++
+             Note that Differ makes no claim to produce a *minimal* diff.  To the
+             contrary, minimal diffs are often counter-intuitive, because they synch
+             up anywhere possible, sometimes accidental matches 100 pages apart.
+             Restricting synch points to contiguous matches preserves some notion of
+             locality, at the occasional cost of producing a longer diff.
+-
++
+             Example: Comparing two texts.
+-
++
+             >>> text1 = ['1. Beautiful is better than ugly.\n',
+             ...   '2. Explicit is better than implicit.\n',
+             ...   '3. Simple is better than complex.\n',
+@@ -22333,16 +22353,16 @@ var require_difflib = __commonJS({
+             ...   '3.   Simple is better than complex.\n',
+             ...   '4. Complicated is better than complex.\n',
+             ...   '5. Flat is better than nested.\n']
+-
++
+             Next we instantiate a Differ object:
+-
++
+             >>> d = new Differ()
+-
++
+             Note that when instantiating a Differ object we may pass functions to
+             filter out line and character 'junk'.
+-
++
+             Finally, we compare the two:
+-
++
+             >>> result = d.compare(text1, text2)
+             [ '  1. Beautiful is better than ugly.\n',
+               '- 2. Explicit is better than implicit.\n',
+@@ -22354,9 +22374,9 @@ var require_difflib = __commonJS({
+               '+ 4. Complicated is better than complex.\n',
+               '?         ++++ ^                      ^\n',
+               '+ 5. Flat is better than nested.\n' ]
+-
++
+             Methods:
+-
++
+             constructor(linejunk=null, charjunk=null)
+                 Construct a text differencer, with optional filters.
+             compare(a, b)
+@@ -22368,15 +22388,15 @@ var require_difflib = __commonJS({
+         }
+         /*
+             Construct a text differencer, with optional filters.
+-
++
+             The two optional keyword parameters are for filter functions:
+-
++
+             - `linejunk`: A function that should accept a single string argument,
+               and return true iff the string is junk. The module-level function
+               `IS_LINE_JUNK` may be used to filter out lines without visible
+               characters, except for at most one splat ('#').  It is recommended
+-              to leave linejunk null.
+-
++              to leave linejunk null.
++
+             - `charjunk`: A function that should accept a string of length 1. The
+               module-level function `IS_CHARACTER_JUNK` may be used to filter out
+               whitespace characters (a blank or tab; **note**: bad idea to include
+@@ -26556,7 +26576,7 @@ ${BREAKPOINT}ALTER TABLE ${tableNameWithSchema} ADD CONSTRAINT "${statement.newC
+       }
+       convert(statement) {
+         const { tableName, columnName, schema: schema6 } = statement;
+-        return `/*
++        return `/*
+     Unfortunately in current drizzle-kit version we can't automatically get name for primary key.
+     We are working on making it available!
+
+@@ -26567,7 +26587,7 @@ ${BREAKPOINT}ALTER TABLE ${tableNameWithSchema} ADD CONSTRAINT "${statement.newC
+                 AND table_name = '${tableName}'
+                 AND constraint_type = 'PRIMARY KEY';
+         2. Uncomment code below and paste pk name manually
+-
++
+     Hope to release this update as soon as possible
+ */
+
+@@ -45780,12 +45800,12 @@ var require_websocket = __commonJS({
+        *          +----------+   +-----------+   +----------+
+        *     - - -|ws.close()|-->|close frame|-->|ws.close()|- - -
+        *    |     +----------+   +-----------+   +----------+     |
+-       *          +----------+   +-----------+         |
+-       * CLOSING  |ws.close()|<--|close frame|<--+-----+       CLOSING
++       *          +----------+   +-----------         |
++       * CLOSING  |ws.close()|<--|close frame|<--+-----       CLOSING
+        *          +----------+   +-----------+   |
+-       *    |           |                        |   +---+        |
++       *    |           |                        |   +---        |
+        *                +------------------------+-->|fin| - - - -
+-       *    |         +---+                      |   +---+
++       *    |         +---                      |   +---+
+        *     - - - - -|fin|<---------------------+
+        *              +---+
+        *
+@@ -56716,9 +56736,9 @@ var require_XMLParser = __commonJS({
+         this.options = buildOptions(options);
+       }
+       /**
+-       * Parse XML dats to JS object
+-       * @param {string|Buffer} xmlData
+-       * @param {boolean|Object} validationOption
++       * Parse XML dats to JS object
++       * @param {string|Buffer} xmlData
++       * @param {boolean|Object} validationOption
+        */
+       parse(xmlData, validationOption) {
+         if (typeof xmlData === "string") {
+@@ -56742,8 +56762,8 @@ var require_XMLParser = __commonJS({
+       }
+       /**
+        * Add Entity which is not by default supported by this library
+-       * @param {string} key
+-       * @param {string} value
++       * @param {string} key
++       * @param {string} value
+        */
+       addEntity(key, value) {
+         if (value.indexOf("&") !== -1) {
+@@ -65551,10 +65571,10 @@ var require_dist_cjs50 = __commonJS({
+                 const warnFn = ((_a2 = init2.logger) == null ? void 0 : _a2.warn) && ((_c = (_b = init2.logger) == null ? void 0 : _b.constructor) == null ? void 0 : _c.name) !== "NoOpLogger" ? init2.logger.warn : console.warn;
+                 warnFn(
+                   `@aws-sdk/credential-provider-node - defaultProvider::fromEnv WARNING:
+-    Multiple credential sources detected:
++    Multiple credential sources detected:
+     Both AWS_PROFILE and the pair AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY static credentials are set.
+     This SDK will proceed with the AWS_PROFILE value.
+-
++
+     However, a future version may change this behavior to prefer the ENV static credentials.
+     Please ensure that your environment only sets either the AWS_PROFILE or the
+     AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY pair.
+@@ -84966,21 +84986,21 @@ var init_gelSerializer = __esm({
+       const internals = { tables: {} };
+       const where = schemaFilters.map((t4) => `n.nspname = '${t4}'`).join(" or ");
+       const allTables = await db.query(
+-        `SELECT
+-    n.nspname::text AS table_schema,
+-    c.relname::text AS table_name,
+-    CASE
++        `SELECT
++    n.nspname::text AS table_schema,
++    c.relname::text AS table_name,
++    CASE
+         WHEN c.relkind = 'r' THEN 'table'
+         WHEN c.relkind = 'v' THEN 'view'
+         WHEN c.relkind = 'm' THEN 'materialized_view'
+     END AS type,
+ 	c.relrowsecurity AS rls_enabled
+-FROM
++FROM
+     pg_catalog.pg_class c
+-JOIN
++JOIN
+     pg_catalog.pg_namespace n ON n.oid::text = c.relnamespace::text
+-WHERE
+-	c.relkind IN ('r', 'v', 'm')
++WHERE
++	c.relkind IN ('r', 'v', 'm')
+     ${where === "" ? "" : ` AND ${where}`};`
+       );
+       const schemas = new Set(allTables.map((it) => it.table_schema));
+@@ -85415,25 +85435,25 @@ WHERE
+     };
+     getColumnsInfoQuery2 = ({ schema: schema6, table: table6, db }) => {
+       return db.query(
+-        `SELECT
++        `SELECT
+     a.attrelid::regclass::text AS table_name,  -- Table, view, or materialized view name
+     a.attname::text AS column_name,   -- Column name
+-    CASE
+-        WHEN NOT a.attisdropped THEN
+-            CASE
++    CASE
++        WHEN NOT a.attisdropped THEN
++            CASE
+                 WHEN a.attnotnull THEN 'NO'
+                 ELSE 'YES'
+-            END
+-        ELSE NULL
++            END
++        ELSE NULL
+     END AS is_nullable,  -- NULL or NOT NULL constraint
+     a.attndims AS array_dimensions,  -- Array dimensions
+-    CASE
+-        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[])
++    CASE
++        WHEN a.atttypid = ANY ('{int,int8,int2}'::regtype[])
+         AND EXISTS (
+             SELECT FROM pg_attrdef ad
+-            WHERE ad.adrelid = a.attrelid
+-            AND ad.adnum = a.attnum
+-            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval('''
++            WHERE ad.adrelid = a.attrelid
++            AND ad.adnum = a.attnum
++            AND pg_get_expr(ad.adbin, ad.adrelid) = 'nextval('''
+                 || pg_get_serial_sequence(a.attrelid::regclass::text, a.attname)::regclass || '''::regclass)'
+         )
+         THEN CASE a.atttypid
+@@ -85457,27 +85477,27 @@ WHERE
+     c.identity_minimum::text,  -- Minimum value for identity column
+     c.identity_cycle::text,  -- Does the identity column cycle?
+     ns.nspname::text AS type_schema  -- Schema of the enum type
+-FROM
++FROM
+     pg_attribute a
+-JOIN
++JOIN
+     pg_class cls ON cls.oid = a.attrelid  -- Join pg_class to get table/view/materialized view info
+-JOIN
++JOIN
+     pg_namespace ns ON ns.oid = cls.relnamespace  -- Join namespace to get schema info
+-LEFT JOIN
+-    information_schema.columns c ON c.column_name = a.attname
+-        AND c.table_schema = ns.nspname
++LEFT JOIN
++    information_schema.columns c ON c.column_name = a.attname
++        AND c.table_schema = ns.nspname
+         AND c.table_name = cls.relname  -- Match schema and table/view name
+-LEFT JOIN
++LEFT JOIN
+     pg_type enum_t ON enum_t.oid = a.atttypid  -- Join to get the type info
+-LEFT JOIN
++LEFT JOIN
+     pg_namespace enum_ns ON enum_ns.oid = enum_t.typnamespace  -- Join to get the enum schema
+-WHERE
++WHERE
+     a.attnum > 0  -- Valid column numbers only
+     AND NOT a.attisdropped  -- Skip dropped columns
+     AND cls.relkind IN ('r', 'v', 'm')  -- Include regular tables ('r'), views ('v'), and materialized views ('m')
+     AND ns.nspname::text = '${schema6}'  -- Filter by schema
+     AND cls.relname::text = '${table6}'  -- Filter by table name
+-ORDER BY
++ORDER BY
+     a.attnum;  -- Order by column number`
+       );
+     };
