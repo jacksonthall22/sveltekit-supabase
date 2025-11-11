@@ -47,11 +47,22 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 1. [Create a Supabase project](https://supabase.com/dashboard/new). The free tier is fine!
 
-1. Create a `.env` based on `.env.example` and fill in your own credentials
+1. Enable Anonymous sign ins: `Authentication > Sign In / Providers > Allow anonymous sign-ins`
+
+1. Disable Legacy API Keys: `Project Settings > API Keys > Legacy API Keys tab > Disable legacy API keys`.
+
+1. Generate publishable/secret keys if they don't already exist: `Project Settings > API Keys > API Keys tab`
+
+1. Create a `.env` based on `.env.example`:
 
    ```bash
    cp .env.example .env
    ```
+
+   Fill in your own credentials in `.env` for the four Supabase related keys. In your Supabase project, click 
+   <img height="20" alt="image" src="https://github.com/user-attachments/assets/71aa32c9-f51e-4bc1-8426-779df3ad0f45" /> 
+   and find the corresponding env var names (they might not start with `PUBLIC_`/`PRIVATE_` - that's a SvelteKit 
+   naming convention). Use the publishable/secret keys from last step. 
 
 1. Push database schema to Supabase with [Drizzle](https://orm.drizzle.team/)
 
