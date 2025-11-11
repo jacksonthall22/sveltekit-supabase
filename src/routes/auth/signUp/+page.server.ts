@@ -36,21 +36,39 @@ export const actions = {
     if (form.data.password !== form.data.confirmPassword)
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
-    // Non-anonymous logged-in user should have been redirected to `/profile` from `+hooks.server.ts`
-    if (!user.is_anonymous) return fail(500, { form, error: 'User is already logged in' })
+    // User should only already exist if it was an anonymous sign-in (TODO).
+    // If user is anonymous, update existing row in Supabase-managed auth table with the new
+    // email/password. Otherwise must create new user.
+    let data
+    if (user) {
+      // Non-anonymous logged-in user should have been redirected to `/profile` from `+hooks.server.ts`
+      if (!user.is_anonymous) return fail(500, { form, error: 'User is already logged in' })
 
-    const existingRow = await db.query.profileTable.findFirst({
-      where: eq(profileTable.id, user.id),
-    })
-    if (existingRow) return fail(500, { form, error: 'User profile already exists' })
+      // We expect to find an existing row in the auth table, not the custom `profileTable`.
+      // If we do have one, we got into a bad state.
+      const existingRow = await db.query.profileTable.findFirst({
+        where: eq(profileTable.id, user.id),
+      })
+      if (existingRow) return fail(500, { form, error: 'User profile data already exists' })
 
-    const { error: authError, data } = await supabase.auth.updateUser({
-      email: form.data.email,
-      password: form.data.password,
-    })
-    if (authError) return fail(500, { authError, form })
+      // Update email/password of the anonymous user
+      const result = await supabase.auth.updateUser({
+        email: form.data.email,
+        password: form.data.password,
+      })
+      data = result.data
+      if (result.error) return fail(500, { error: result.error, form })
+    } else {
+      // No current user - create a new one
+      const result = await supabase.auth.signUp({
+        email: form.data.email,
+        password: form.data.password,
+      })
+      data = result.data
+      if (result.error) return fail(500, { error: result.error, form })
+    }
 
-    // Create profile record
+    // Create a row in custom `profileTable` with other account info
     const row = await db
       .insert(profileTable)
       .values({ id: data.user!.id, firstName: form.data.firstName, lastName: form.data.lastName })

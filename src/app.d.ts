@@ -7,13 +7,12 @@ declare global {
     interface Locals {
       supabase: SupabaseClient<Database>
       supabaseAdmin: SupabaseClient<Database>
-      // `session` and `user` will always be set, but may be anonymous when user is logged out
-      safeGetSession: () => Promise<{ session: Session; user: User }>
-      session: Session
-      user: User
+      safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
+      session: Session | null
+      user: User | null
     }
     interface PageData {
-      session: Session
+      session: Session | null
     }
     // interface PageState {}
     // interface Platform {}

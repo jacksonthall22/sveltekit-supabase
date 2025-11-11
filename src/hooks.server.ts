@@ -77,18 +77,6 @@ const supabase: Handle = async ({ event, resolve }) => {
       error: getUserError, // This error will be populated if the JWT is invalid
     } = await event.locals.supabase.auth.getUser()
 
-    // TODO: Remove? Do we only need to do this on the client?
-    // Check if user has logged out or JWT validation has failed
-    if (!session || !user || getSessionError || getUserError) {
-      // Here user is considered signed out. Return an anonymous session.
-      // See: https://supabase.com/docs/guides/auth/auth-anonymous?queryGroups=language&language=js
-      await event.locals.supabase.auth.signInAnonymously()
-      session = (await event.locals.supabase.auth.getSession()).data.session!
-      user = (await event.locals.supabase.auth.getUser()).data.user!
-      if (!session.user.is_anonymous || !user.is_anonymous)
-        throw new Error('Failed to create anonymous user and session')
-    }
-
     return { session, user }
   }
 
@@ -108,14 +96,15 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  const isLoggedIn = !!session && !user.is_anonymous
+  const isLoggedInNonAnonymous = session && user && !user.is_anonymous
   const pathname = event.url.pathname
 
   // Redirect away from private routes while logged out
-  if (!isLoggedIn && pathname === route('/private')) redirect(303, route('/auth/signIn'))
+  if (!isLoggedInNonAnonymous && pathname === route('/private'))
+    redirect(303, route('/auth/signIn'))
 
   // Redirect to profile if trying to sign in/up while logged in
-  if (isLoggedIn && [route('/auth/signIn'), route('/auth/signUp')].includes(pathname))
+  if (isLoggedInNonAnonymous && [route('/auth/signIn'), route('/auth/signUp')].includes(pathname))
     redirect(303, route('/profile'))
 
   return resolve(event)

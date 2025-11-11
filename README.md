@@ -47,8 +47,6 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 1. [Create a Supabase project](https://supabase.com/dashboard/new). The free tier is fine!
 
-1. Enable Anonymous sign ins: `Authentication > Sign In / Providers > Allow anonymous sign-ins`
-
 1. Disable Legacy API Keys: `Project Settings > API Keys > Legacy API Keys tab > Disable legacy API keys`.
 
 1. Generate publishable/secret keys if they don't already exist: `Project Settings > API Keys > API Keys tab`
