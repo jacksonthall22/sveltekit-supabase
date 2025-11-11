@@ -55,8 +55,7 @@ export const actions = {
       .insert(profileTable)
       .values({ id: data.user!.id, firstName: form.data.firstName, lastName: form.data.lastName })
       .returning()
-    if (!row.length)
-      return fail(500, { form, error: 'Failed to create user profile in database' })
+    if (!row.length) return fail(500, { form, error: 'Failed to create user profile in database' })
 
     return redirect(303, route('/'))
   },

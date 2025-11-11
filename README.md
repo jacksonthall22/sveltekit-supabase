@@ -7,15 +7,15 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 ## Features
 
 - Supabase Authentication ([PKCE flow](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit))
-    - Sign up/in/out
-    - Change/recover password
-    - Server-side redirects for protecting routes
+  - Sign up/in/out
+  - Change/recover password
+  - Server-side redirects for protecting routes
 - Drizzle + Postgres + Zod for storing additional account data
 - SvelteKit SuperForms + Zod for form parsing, validation, progressive enhancement, and reactive `submitting`/`delayed` state handling
 - Light/dark mode stored reactively in cookies with [`svelte-persisted-state`](https://github.com/oMaN-Rod/svelte-persisted-state)
-    - Set reactively client-side
-    - Set proactively server-side by transforming HTML in `hooks.server.ts` to prevent [FOUC](https://en.wikipedia.org/wiki/Flash_of_unstyled_content)!
-    - Ready to extend to store/load arbitrary site-wide settings!
+  - Set reactively client-side
+  - Set proactively server-side by transforming HTML in `hooks.server.ts` to prevent [FOUC](https://en.wikipedia.org/wiki/Flash_of_unstyled_content)!
+  - Ready to extend to store/load arbitrary site-wide settings!
 - Custom site-wide reactive toast messaging system
 
 ## Technologies
@@ -59,10 +59,10 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    cp .env.example .env
    ```
 
-   Fill in your own credentials in `.env` for the four Supabase related keys. In your Supabase project, click 
-   <img height="20" alt="image" src="https://github.com/user-attachments/assets/71aa32c9-f51e-4bc1-8426-779df3ad0f45" /> 
-   and find the corresponding env var names (they might not start with `PUBLIC_`/`PRIVATE_` - that's a SvelteKit 
-   naming convention). Use the publishable/secret keys from last step. 
+   Fill in your own credentials in `.env` for the four Supabase related keys. In your Supabase project, click
+   <img height="20" alt="image" src="https://github.com/user-attachments/assets/71aa32c9-f51e-4bc1-8426-779df3ad0f45" />
+   and find the corresponding env var names (they might not start with `PUBLIC_`/`PRIVATE_` - that's a SvelteKit
+   naming convention). Use the publishable/secret keys from last step.
 
 1. Push database schema to Supabase with [Drizzle](https://orm.drizzle.team/)
 
@@ -83,7 +83,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 <sub>(TODO - document these better, I'm trying to remember after the fact. Feel free to open issues with any questions!)</sub>
 
 - Start by following [these docs](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit) for setting up Supabase (all code is already implemented - there are just a few things to set up in your project settings)
-    - Be sure to change email templates as mentioned [here](https://supabase.com/docs/guides/auth/passwords?queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit&queryGroups=language&language=js#resetting-a-password)
+  - Be sure to change email templates as mentioned [here](https://supabase.com/docs/guides/auth/passwords?queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit&queryGroups=language&language=js#resetting-a-password)
 - Change `Site URL` in supabase project settings (go to `https://supabase.com/dashboard/project/<project_id>/auth/url-configuration`)
 - There may be some problems with CORS in Supabase
 - Need to make sure `MIN_PASSWORD_LENGTH` in `constants.ts` has pairity with Supabase settings: `Authentication > Sign In / Providers > Email > Minimum password length`
