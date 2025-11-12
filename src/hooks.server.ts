@@ -1,5 +1,5 @@
 import { PRIVATE_SUPABASE_SECRET_KEY } from '$env/static/private'
-import { PUBLIC_SUPABASE_PUBLISHABLE_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { DaisyUITheme } from '$lib/constants'
 import { route } from '$lib/ROUTES'
 import {
@@ -17,21 +17,25 @@ const supabase: Handle = async ({ event, resolve }) => {
    *
    * The Supabase client gets the Auth token from the request cookies.
    */
-  event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
-    cookies: {
-      getAll: () => event.cookies.getAll(),
-      /**
-       * SvelteKit's cookies API requires `path` to be explicitly set in
-       * the cookie options. Setting `path` to `/` replicates previous/
-       * standard behavior.
-       */
-      setAll: (cookiesToSet) => {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          event.cookies.set(name, value, { ...options, path: '/' })
-        })
+  event.locals.supabase = createServerClient(
+    PUBLIC_SUPABASE_URL,
+    PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
+    {
+      cookies: {
+        getAll: () => event.cookies.getAll(),
+        /**
+         * SvelteKit's cookies API requires `path` to be explicitly set in
+         * the cookie options. Setting `path` to `/` replicates previous/
+         * standard behavior.
+         */
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            event.cookies.set(name, value, { ...options, path: '/' })
+          })
+        },
       },
     },
-  })
+  )
 
   /**
    * Creates an Admin Supabase client specific to this server request.
