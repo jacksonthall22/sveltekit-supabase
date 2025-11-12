@@ -26,6 +26,8 @@ export const load: PageServerLoad = async () => {
   return { form }
 }
 
+const GENERIC_FAIL_MESSAGE = 'Failed to create user, please reach out to support.'
+
 export const actions = {
   default: async ({ request, locals: { supabase, user } }) => {
     const form = await superValidate(request, zod(schema))
@@ -47,14 +49,20 @@ export const actions = {
     let data
     if (user) {
       // Non-anonymous logged-in user should have been redirected to `/profile` from `+hooks.server.ts`
-      if (!user.is_anonymous) return fail(500, { form, error: 'User is already logged in' })
+      if (!user.is_anonymous) {
+        setError(form, GENERIC_FAIL_MESSAGE, { status: 500 })
+        return fail(500, { form, error: 'Anonymous user already exists' })
+      }
 
       // We expect to find an existing row in the auth table, not the custom `profileTable`.
       // If we do have one, we got into a bad state.
       const existingRow = await db.query.profileTable.findFirst({
         where: eq(profileTable.id, user.id),
       })
-      if (existingRow) return fail(500, { form, error: 'User profile data already exists' })
+      if (existingRow) {
+        setError(form, GENERIC_FAIL_MESSAGE, { status: 500 })
+        return fail(500, { form, error: 'User profile data already exists' })
+      }
 
       // Update email/password of the anonymous user
       const result = await supabase.auth.updateUser({
@@ -62,7 +70,10 @@ export const actions = {
         password: form.data.password,
       })
       data = result.data
-      if (result.error) return fail(500, { error: 'Failed to update anonymous user', form })
+      if (result.error) {
+        setError(form, GENERIC_FAIL_MESSAGE, { status: 500 })
+        return fail(500, { error: 'Failed to update anonymous user', form })
+      }
     } else {
       // No current user - create a new one
       const result = await supabase.auth.signUp({
@@ -74,12 +85,17 @@ export const actions = {
       })
       data = result.data
       if (result.error) {
+        if (result.error.code == 'weak_password') return setError(form, 'password', 'Weak password')
+
         if (result.error.code == 'captcha_failed')
           return setError(form, 'hcaptchaToken', 'Captcha verification failed', { status: 422 })
 
         if (result.error.code == 'user_already_exists')
           return setError(form, 'email', 'User already exists', { status: 409 })
 
+        setError(form, 'Failed to create user, please check form details and try again.', {
+          status: 422,
+        })
         return fail(500, { error: 'Failed to create new user', form })
       }
     }
@@ -89,7 +105,10 @@ export const actions = {
       .insert(profileTable)
       .values({ id: data.user!.id, firstName: form.data.firstName, lastName: form.data.lastName })
       .returning()
-    if (!row.length) return fail(500, { form, error: 'Failed to create user profile in database' })
+    if (!row.length) {
+      setError(form, GENERIC_FAIL_MESSAGE, { status: 500 })
+      return fail(500, { form, error: 'Failed to create user profile in database' })
+    }
 
     return redirect(303, route('/'))
   },
