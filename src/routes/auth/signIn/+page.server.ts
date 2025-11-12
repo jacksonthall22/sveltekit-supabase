@@ -5,7 +5,6 @@ import { z } from 'zod'
 import type { SuperValidated } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 import { setError, superValidate } from 'sveltekit-superforms'
-import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 
 const schema = z.object({
   email: z.string().email(),
