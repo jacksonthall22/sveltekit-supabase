@@ -74,11 +74,11 @@ const supabase: Handle = async ({ event, resolve }) => {
   event.locals.safeGetSession = async () => {
     let {
       data: { session },
-      error: getSessionError,
+      // error: getSessionError,
     } = await event.locals.supabase.auth.getSession()
     let {
       data: { user },
-      error: getUserError, // This error will be populated if the JWT is invalid
+      // error: getUserError, // This error will be populated if the JWT is invalid
     } = await event.locals.supabase.auth.getUser()
 
     return { session, user }
@@ -100,7 +100,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session
   event.locals.user = user
 
-  const isLoggedInNonAnonymous = session && user && !user.is_anonymous
+  const isLoggedInNonAnonymous = !!(session && user && !user.is_anonymous)
   const pathname = event.url.pathname
 
   // Redirect away from private routes while logged out
