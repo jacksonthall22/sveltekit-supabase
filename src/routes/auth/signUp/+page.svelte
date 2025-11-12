@@ -8,13 +8,10 @@
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
     superForm(data.form),
   )
-  let hcaptcha: HCaptcha
 
+  let hcaptcha: HCaptcha | undefined = $state(undefined)
   $effect(() => {
-    if ($errors) {
-      console.log('test: $errors:', $errors)
-      hcaptcha.reset()
-    }
+    if ($errors) hcaptcha?.reset()
   })
 </script>
 
