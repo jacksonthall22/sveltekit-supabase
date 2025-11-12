@@ -9,6 +9,7 @@ import { zod } from 'sveltekit-superforms/adapters'
 import { z } from 'zod'
 import type { Actions, PageServerLoad } from './$types'
 import { eq } from 'drizzle-orm'
+import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 
 const schema = z.object({
   firstName: z.string(),
@@ -16,7 +17,7 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
-  hcaptchaToken: z.string().min(1),
+  hcaptchaToken: z.string(),
 })
 
 export type SignUpFormValidated = SuperValidated<z.infer<typeof schema>>
@@ -40,8 +41,8 @@ export const actions = {
       return setError(form, 'confirmPassword', 'Passwords do not match')
 
     // Check that hCaptcha was completed
-    if (!form.data.hcaptchaToken)
-      return setError(form, 'hcaptchaToken', 'Please complete hCaptcha challenge')
+    if (PUBLIC_USE_HCAPTCHA && !form.data.hcaptchaToken)
+      return setError(form, 'Please complete hCaptcha challenge')
 
     // User should only already exist if it was an anonymous sign-in (which are a TODO).
     // If user is anonymous, update existing row in Supabase-managed auth table with the new
@@ -79,16 +80,19 @@ export const actions = {
       const result = await supabase.auth.signUp({
         email: form.data.email,
         password: form.data.password,
-        options: {
-          captchaToken: form.data.hcaptchaToken,
-        },
+        options:
+          PUBLIC_USE_HCAPTCHA ?
+            {
+              captchaToken: form.data.hcaptchaToken,
+            }
+          : {},
       })
       data = result.data
       if (result.error) {
         if (result.error.code == 'weak_password') return setError(form, 'password', 'Weak password')
 
         if (result.error.code == 'captcha_failed')
-          return setError(form, 'hcaptchaToken', 'Captcha verification failed', { status: 422 })
+          return setError(form, 'hCaptcha verification failed', { status: 422 })
 
         if (result.error.code == 'user_already_exists')
           return setError(form, 'email', 'User already exists', { status: 409 })

@@ -3,6 +3,7 @@
   import ForgotPasswordLink from '../ForgotPasswordLink.svelte'
   import { route } from '$lib/ROUTES'
   import HCaptcha from '$lib/components/HCaptcha.svelte'
+  import { PUBLIC_USE_HCAPTCHA } from '$env/static/public'
 
   let { data } = $props()
   let { form, errors, constraints, message, submitting, delayed, enhance } = $derived(
@@ -106,10 +107,12 @@
       <div class="text-error">{$errors.firstName}</div>
     {/if}
 
-    <HCaptcha bind:this={hcaptcha} bind:token={$form.hcaptchaToken} />
     <input type="hidden" name="hcaptchaToken" bind:value={$form.hcaptchaToken} />
-    {#if $errors.hcaptchaToken}
-      <div class="text-error">{$errors.hcaptchaToken}</div>
+    {#if PUBLIC_USE_HCAPTCHA}
+      <HCaptcha bind:this={hcaptcha} bind:token={$form.hcaptchaToken} />
+      {#if $errors.hcaptchaToken}
+        <div class="text-error">{$errors.hcaptchaToken}</div>
+      {/if}
     {/if}
 
     <div class="card-actions">
