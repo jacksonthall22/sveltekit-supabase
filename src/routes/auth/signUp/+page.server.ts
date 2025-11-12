@@ -16,7 +16,7 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(MIN_PASSWORD_LENGTH),
   confirmPassword: z.string().min(MIN_PASSWORD_LENGTH),
-  hcaptchaToken: z.string(),
+  hcaptchaToken: z.string().min(1),
 })
 
 export type SignUpFormValidated = SuperValidated<z.infer<typeof schema>>
