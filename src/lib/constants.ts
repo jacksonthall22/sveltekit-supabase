@@ -1,4 +1,4 @@
-export const MIN_PASSWORD_LENGTH = 6 // TODO increase
+export const MIN_PASSWORD_LENGTH = 14
 
 export enum DaisyUITheme {
   light = 'light',
