@@ -126,13 +126,13 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 1. Navigate to [`http://localhost:5173`](http://localhost:5173) to see your app running!
 
-### Troubleshooting
+## Troubleshooting
 
 <sub>(Feel free to open issues with any questions about missing steps here!)</sub>
 
 - Might need to update the redirect URL sent in change-password emails in Supabase project settings - I think after deploying to vercel, the live site might still try to redirect to `localhost`
 
-# Deploying to Vercel
+## Deploying to Vercel
 
 <sub>(TODO: verify these are all the steps needed)</sub>
 
@@ -156,11 +156,11 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    vercel --prod
    ```
 
-# Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a PR or open issues.
 
-# Thanks
+## Thanks
 
 Shout out to [Davis Media](https://github.com/Davis-Media) for building the base-base template for this project! 🤙
 
