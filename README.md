@@ -8,6 +8,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 - Supabase Authentication ([PKCE flow](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit))
   - Sign up/in/out
+  - hCaptcha spam prevention
   - Change/recover password
   - Server-side redirects for protecting routes
 - Drizzle + Postgres + Zod for storing additional account data
