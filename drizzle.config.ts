@@ -5,6 +5,6 @@ export default defineConfig({
   schema: './src/lib/db/pushableSchema.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.PRIVATE_DATABASE_URL!,
+    url: process.env.PRIVATE_SUPABASE_DATABASE_URL!,
   },
 })
