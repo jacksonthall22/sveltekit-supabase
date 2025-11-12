@@ -45,11 +45,53 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    pnpm i
    ```
 
-1. [Create a Supabase project](https://supabase.com/dashboard/new). The free tier is fine!
+1. [Create a Supabase project](https://supabase.com/dashboard/new). The default settings and free tier are fine! Save your `Database password` for later.
 
-1. Disable Legacy API Keys: `Project Settings > API Keys > Legacy API Keys tab > Disable legacy API keys`.
+1. Set up in Supabase:
+   1. Disable Legacy API Keys: `Project Settings > API Keys > Legacy API Keys tab > Disable legacy API keys`.
 
-1. Generate publishable/secret keys if they don't already exist: `Project Settings > API Keys > API Keys tab`
+   1. Generate publishable/secret keys: `Project Settings > API Keys > API Keys tab > Create new API keys`
+
+   1. Password settings: `Authentication > Sign In / Providers > Email`
+
+   1. Turn off `Confirm email` (optional): `Authentication > Sign In / Providers > Confirm email (off)`
+
+   1. Email auth settings (recommended): `Authentication > Sign In / Providers > Email`:
+      - `Secure email change`: on
+      - `Secure password change`: on
+      - `Minimum password length`: 14
+      - `Password Requirements`: Lowercase, uppercase letters, digits and symbols
+      - `Email OTP Length`: 6
+      - `Save`
+   
+   1. Enable hCaptcha verification: `Authentication > Attack Prevention > Enable Captcha protection`
+  
+   1. Change `Authentication > URL Configuration > Site URL`: `http://localhost:5173`
+
+   1. Update email templates for sign up / password reset flows ([original docs](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit)): `Authentication > Emails > ...`:
+      1. `Confirm sign up`:
+          ```html
+          <h2>Confirm your signup</h2>
+          
+          <p>Follow this link to confirm your user:</p>
+          <p>
+            <a
+              href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+              >Confirm your email</a
+            >
+          </p>
+          ```
+      1. `Reset password`:
+         ```html
+         <h2>Reset Password</h2>
+         <p>Follow this link to reset the password for your user:</p>
+         <p>
+           <a
+             href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/account/update-password"
+             >Reset Password</a
+           >
+         </p>
+         ```
 
 1. Create a `.env` based on `.env.example`:
 
@@ -57,10 +99,17 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    cp .env.example .env
    ```
 
-   Fill in your own credentials in `.env` for the four Supabase related keys. In your Supabase project, click
+1. Fill in your own Supabase keys in `.env`. In your Supabase project, click
    <img height="20" alt="image" src="https://github.com/user-attachments/assets/71aa32c9-f51e-4bc1-8426-779df3ad0f45" />
-   and find the corresponding env var names (they might not start with `PUBLIC_`/`PRIVATE_` - that's a SvelteKit
-   naming convention). Use the publishable/secret keys from last step.
+   and find the four vars:
+   - `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`:
+     <img width="2036" height="662" alt="image" src="https://github.com/user-attachments/assets/2c8db2f2-c262-4b55-8853-06fb4de939aa" />
+   - `PRIVATE_DATABASE_URL`:
+     <img width="2040" height="656" alt="image" src="https://github.com/user-attachments/assets/5034db6a-15b0-468b-8f5c-d6147b8a9c8d" />
+   - `PRIVATE_SUPABASE_SECRET_KEY`: From earlier step, `Project Settings > API Keys > API Keys tab > Secret Keys > default`
+
+1. [Create an hCaptcha site](https://dashboard.hcaptcha.com/welcome). Copy the sitekey and generate a secret key, then
+   paste in `.env` (no need to install any plugins for step 3, just click `Done`).
 
 1. Push database schema to Supabase with [Drizzle](https://orm.drizzle.team/)
 
@@ -74,18 +123,13 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    pnpm dev
    ```
 
-1. Navigate to [`localhost:5173`](http://localhost:5173) to see your app running!
+1. Navigate to [`http://localhost:5173`](http://localhost:5173) to see your app running!
 
-### Other required setup
+### Troubleshooting
 
-<sub>(TODO - document these better, I'm trying to remember after the fact. Feel free to open issues with any questions!)</sub>
+<sub>(Feel free to open issues with any questions about missing steps here!)</sub>
 
-- Start by following [these docs](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit) for setting up Supabase (all code is already implemented - there are just a few things to set up in your project settings)
-  - Be sure to change email templates as mentioned [here](https://supabase.com/docs/guides/auth/passwords?queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit&queryGroups=language&language=js#resetting-a-password)
-- Change `Site URL` in supabase project settings (go to `https://supabase.com/dashboard/project/<project_id>/auth/url-configuration`)
-- There may be some problems with CORS in Supabase
-- Need to make sure `MIN_PASSWORD_LENGTH` in `constants.ts` has pairity with Supabase settings: `Authentication > Sign In / Providers > Email > Minimum password length`
-- Might need to update the redirect URL sent in change-password emails in Supabase project settings (I think after deploying to vercel, the live site might try to redirect to `localhost` still)
+- Might need to update the redirect URL sent in change-password emails in Supabase project settings - I think after deploying to vercel, the live site might still try to redirect to `localhost`
 
 # Deploying to Vercel
 
@@ -113,7 +157,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 
 # Contributing
 
-Contributions are welcome! Please feel free to submit a PR or open an issue.
+Contributions are welcome! Please feel free to submit a PR or open issues.
 
 # Thanks
 
