@@ -9,7 +9,7 @@ import { MIN_PASSWORD_LENGTH } from '$lib/constants'
 
 const schema = z.object({
   email: z.string().email(),
-  password: z.string().min(MIN_PASSWORD_LENGTH),
+  password: z.string(),
 })
 
 export type SignInFormValidated = SuperValidated<z.infer<typeof schema>>
