@@ -49,7 +49,7 @@ const LINKS = {
   "engageintellectGithub": `https://github.com/engageintellect`
 }
 
-type ParamValue = string | number | undefined
+type ParamValue = string | number | boolean | null | undefined
 
 /**
  * Append search params to a string
