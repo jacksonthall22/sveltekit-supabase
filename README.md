@@ -4,6 +4,18 @@
 
 A SvelteKit starter app with email/password login, and some other nice bells & whistles!
 
+## Technologies
+
+- [SvelteKit](https://kit.svelte.dev/): A framework for building web applications with Svelte
+- [TypeScript](https://www.typescriptlang.org/): A typed superset of JavaScript that compiles to plain JavaScript
+- [Supabase](https://supabase.io/): An open-source Firebase alternative
+- [Zod](https://zod.dev): A TypeScript-first schema declaration and validation library
+- [svelte-persisted-state](https://github.com/oMaN-Rod/svelte-persisted-state): Svelte 5 state runes persisted to localStorage, sessionStorage, or cookies
+- [vite-plugin-kit-routes](https://www.kitql.dev/docs/tools/06_vite-plugin-kit-routes): Automatically generates a `ROUTES.ts` file in SvelteKit projects that facilitates type-safe `href` routing to avoid broken links
+- [Tailwind CSS](https://tailwindcss.com/): A utility-first CSS framework
+- [DaisyUI](https://daisyui.com/): A "collection of CSS class names", like an extension of Tailwind with easy theming options
+- [Iconify](https://iconify.design): A unified icon framework using icons from [icones.js](https://icones.js.org/collection/all)
+
 ## Features
 
 - Supabase Authentication ([PKCE flow](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit))
@@ -18,18 +30,6 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
   - Set proactively server-side by transforming HTML in `hooks.server.ts` to prevent [FOUC](https://en.wikipedia.org/wiki/Flash_of_unstyled_content)!
   - Ready to extend to store/load arbitrary site-wide settings!
 - Custom site-wide reactive toast messaging system
-
-## Technologies
-
-- [SvelteKit](https://kit.svelte.dev/): A framework for building web applications with Svelte
-- [TypeScript](https://www.typescriptlang.org/): A typed superset of JavaScript that compiles to plain JavaScript
-- [Supabase](https://supabase.io/): An open-source Firebase alternative
-- [Zod](https://zod.dev): A TypeScript-first schema declaration and validation library
-- [svelte-persisted-state](https://github.com/oMaN-Rod/svelte-persisted-state): Svelte 5 state runes persisted to localStorage, sessionStorage, or cookies
-- [vite-plugin-kit-routes](https://www.kitql.dev/docs/tools/06_vite-plugin-kit-routes): Automatically generates a `ROUTES.ts` file in SvelteKit projects that facilitates type-safe `href` routing to avoid broken links
-- [Tailwind CSS](https://tailwindcss.com/): A utility-first CSS framework
-- [DaisyUI](https://daisyui.com/): A "collection of CSS class names", like an extension of Tailwind with easy theming options
-- [Iconify](https://iconify.design): A unified icon framework using icons from [icones.js](https://icones.js.org/collection/all)
 
 ## Getting Started
 
