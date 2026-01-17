@@ -115,7 +115,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
 1. Push database schema to Supabase with [Drizzle](https://orm.drizzle.team/)
 
    ```bash
-   drizzle-kit push
+   pnpm exec drizzle-kit push
    ```
 
 1. Start your app
