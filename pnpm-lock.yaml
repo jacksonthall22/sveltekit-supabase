@@ -34,9 +34,6 @@ importers:
       daisyui:
         specifier: ^5.5.0
         version: 5.5.0
-      drizzle-orm:
-        specifier: ^0.44.7
-        version: 0.44.7(postgres@3.4.7)
       drizzle-zod:
         specifier: ^0.8.3
         version: 0.8.3(drizzle-orm@0.44.7(postgres@3.4.7))(zod@3.25.67)
@@ -89,6 +86,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.4(patch_hash=dad9145b3c46b3be412da3af334afc5542ce2bd475246afb98a110bcac485df2)
+      drizzle-orm:
+        specifier: ^0.44.7
+        version: 0.44.7(postgres@3.4.7)
       eslint:
         specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
