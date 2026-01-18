@@ -1,15 +1,18 @@
 <script>
+  import { PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
   import { invalidate } from '$app/navigation'
   import { page } from '$app/state'
   import SignInButton from '$lib/components/SignInButton.svelte'
   import ThemeController from '$lib/components/ThemeController.svelte'
   import Toaster from '$lib/components/Toaster.svelte'
   import { route } from '$lib/ROUTES'
+  import { createBrowserClient } from '@supabase/ssr'
   import { onMount } from 'svelte'
   import '../app.css'
 
   const { data, children } = $props()
-  const { supabase, session } = $derived(data)
+  const { session } = $derived(data)
+  let supabase
 
   let breadcrumbs = $derived.by(() => {
     const { pathname } = page.url
@@ -23,6 +26,7 @@
 
   // https://supabase.com/docs/guides/auth/server-side/sveltekit
   onMount(() => {
+    supabase = createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY)
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) invalidate('supabase:auth')
 
