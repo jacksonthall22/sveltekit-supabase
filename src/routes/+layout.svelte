@@ -5,11 +5,12 @@
   import ThemeController from '$lib/components/ThemeController.svelte'
   import Toaster from '$lib/components/Toaster.svelte'
   import { route } from '$lib/ROUTES'
+  import { getSupabaseClient } from '$lib/supabaseClient'
   import { onMount } from 'svelte'
   import '../app.css'
 
   const { data, children } = $props()
-  const { supabase, session } = $derived(data)
+  const { session } = $derived(data)
 
   let breadcrumbs = $derived.by(() => {
     const { pathname } = page.url
@@ -23,6 +24,9 @@
 
   // https://supabase.com/docs/guides/auth/server-side/sveltekit
   onMount(() => {
+    const supabase = getSupabaseClient()
+    if (!supabase) return
+
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) invalidate('supabase:auth')
 
