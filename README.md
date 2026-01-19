@@ -67,7 +67,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
    
    1. Enable hCaptcha verification: `Authentication > Attack Prevention > Enable Captcha protection`
   
-   1. Change `Authentication > URL Configuration > Site URL`: `http://localhost:5173`
+   1. Change `Authentication > URL Configuration > Site URL`: `http://localhost:5173` & save
 
    1. Update email templates for sign up / password reset flows ([original docs](https://supabase.com/docs/guides/auth/passwords?queryGroups=language&language=js&queryGroups=flow&flow=pkce&queryGroups=framework&framework=sveltekit)): `Authentication > Emails > ...`:
       1. `Confirm sign up`:
@@ -88,7 +88,7 @@ A SvelteKit starter app with email/password login, and some other nice bells & w
          <p>Follow this link to reset the password for your user:</p>
          <p>
            <a
-             href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/account/update-password"
+             href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next={{ .RedirectTo }}"
              >Reset Password</a
            >
          </p>
