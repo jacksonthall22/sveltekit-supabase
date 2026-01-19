@@ -16,8 +16,7 @@ const PAGES = {
   "/auth/signIn": `/auth/signIn`,
   "/auth/signUp": `/auth/signUp`,
   "/private": `/private`,
-  "/profile": `/profile`,
-  "/testToaster": `/testToaster`
+  "/profile": `/profile`
 }
 
 /**
@@ -154,7 +153,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/': never, '/auth/error': never, '/auth/recovery': never, '/auth/reset-password': never, '/auth/signIn': never, '/auth/signUp': never, '/private': never, '/profile': never, '/testToaster': never }
+  PAGES: { '/': never, '/auth/error': never, '/auth/recovery': never, '/auth/reset-password': never, '/auth/signIn': never, '/auth/signUp': never, '/private': never, '/profile': never }
   SERVERS: { 'GET /auth/callback': never, 'GET /auth/confirm': never }
   ACTIONS: { 'default /auth/deleteAccount': never, 'default /auth/recovery': never, 'default /auth/reset-password': never, 'default /auth/signIn': never, 'default /auth/signOut': never, 'default /auth/signUp': never, 'default /profile': never }
   LINKS: { 'jacksonLinkedin': never, 'engageintellectGithub': never }
