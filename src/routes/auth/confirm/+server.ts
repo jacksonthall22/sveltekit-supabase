@@ -9,12 +9,10 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const next = url.searchParams.get('next') ?? '/'
 
   /**
-   * Clean up the redirect URL by deleting the Auth flow parameters.
-   *
-   * `next` is preserved for now, because it's needed in the error case.
+   * Build the redirect URL from `next` (absolute or relative),
+   * then clean up the Auth flow parameters.
    */
-  const redirectTo = new URL(url)
-  redirectTo.pathname = next
+  const redirectTo = new URL(next, url)
   redirectTo.searchParams.delete('token_hash')
   redirectTo.searchParams.delete('type')
 
@@ -32,6 +30,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
     redirect(303, redirectTo)
   }
 
-  redirectTo.pathname = '/auth/error'
-  redirect(303, redirectTo)
+  const errorRedirect = new URL('/auth/error', url)
+  errorRedirect.searchParams.set('next', next)
+  redirect(303, errorRedirect)
 }
